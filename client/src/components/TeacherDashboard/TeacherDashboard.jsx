@@ -3,14 +3,21 @@ import styles from "./TeacherDashboard.module.css";
 import axios from "axios";
 import Modal from "react-modal";
 import TicketForm from "./TicketForm/TicketForm";
-Modal.setAppElement('#root');
+import useAuth from "../Login/checkAuth";
+import checkAuth from "../Login/checkAuth";
+import { useLocation, useNavigate } from "react-router-dom";
+Modal.setAppElement("#root");
 const TeacherDashboard = () => {
   const [tickets, setTickets] = useState([
     { status: "pending", date: "", time: "", file: "", subject: "" },
   ]);
-
+  const route = useLocation().pathname;
+  const navigate = useNavigate();
+  const rolesArray=["teacher"]
   const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
+    console.log("I am here->  ")
+    checkAuth(rolesArray,route,navigate);
     // Fetch tickets for the teacher when the component mounts
     // You'll need to replace 'teacherId' with the actual ID of the logged-in teacher
     // axios
@@ -38,13 +45,16 @@ const TeacherDashboard = () => {
           <div className={styles.ticket_status}>
             <span className={styles.my_tickets}>My Tickets</span>
             <div className={styles.ticketList}>
-              {tickets.map((ticket,index) => (
+              {tickets.map((ticket, index) => (
                 <div key={index} className={styles.ticketListItem}>
-                 <div> {ticket.status!==""?`Status: ${ticket.status}`:null}</div>
-                 <div> {`Date: ${ticket.date}`}</div>
-                 <div> {`Start-Time: ${ticket.start_time}`}</div>
-                 <div> {`End-Time: ${ticket.end_time}`}</div>
-                 <div> {`Subject: ${ticket.subject}`}</div>
+                  <div>
+                    {" "}
+                    {ticket.status !== "" ? `Status: ${ticket.status}` : null}
+                  </div>
+                  <div> {`Date: ${ticket.date}`}</div>
+                  <div> {`Start-Time: ${ticket.start_time}`}</div>
+                  <div> {`End-Time: ${ticket.end_time}`}</div>
+                  <div> {`Subject: ${ticket.subject}`}</div>
                 </div>
               ))}
             </div>
@@ -74,7 +84,7 @@ const TeacherDashboard = () => {
         </div>
       </div>
       <div className={styles.video}>
-        {/* <video src="background.mp4" muted playsInline autoPlay loop></video> */}
+        <video src="background.mp4" muted playsInline autoPlay loop></video>
       </div>
     </div>
   );

@@ -1,18 +1,6 @@
 import mongoose from "mongoose";
-const Hall = mongoose.model('Hall', {
-    hall: Number,
-    free: Number,
-    row: Number,
-    collumn: Number,
-});
-const Request = mongoose.model('Request', {
-    subject: String,
-    start: Date,
-    end: Date,
-    link: String,
-    type: String, // can be announce 'cancel', 'schedule' exam, announce 'view' sheet
-});
-const connectDB = async () => {
+
+export const connectDB = async () => {
     await mongoose.connect('mongodb://127.0.0.1:27017/teacherDB');
     console.log('Connected to MongoDB');
     // const Hall = mongoose.model('Hall', {
@@ -57,9 +45,9 @@ const connectDB = async () => {
     //     }
     // }
 }
-export { Hall, Request, connectDB };
-
 // connectDB()
+
+
 // const Teacher = mongoose.model('Teacher', {
 //     name: String,
 //     subject: String,

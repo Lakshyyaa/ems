@@ -24,48 +24,48 @@
 
 import mongoose from 'mongoose';
 import xlsx from 'xlsx';
-import {connectDB, Hall, Request} from '../model/db.js';
+import {connectDB} from './db.js';
 const maxhalls = 17 // shweta maam told us that we can have halls uniform and equal, 
 // though seatgen function works regardless, just counting seats will take time
 
-// const Hall = mongoose.model('Hall', {
-//     hall: Number,
-//     free: Number,
-//     row: Number,
-//     collumn: Number,
-// });
-// const Schedule = mongoose.model('Schedule', {
-//     subject: String,
-//     start: Date,
-//     end: Date,
-//     halls: Number
-// });
-// const Request = mongoose.model('Request', {
-//     subject: String,
-//     start: Date,
-//     end: Date,
-//     link: String,
-//     type: String, // can be announce 'cancel', 'schedule' exam, announce 'view' sheet
-// });
+const Hall = mongoose.model('Hall', {
+    hall: Number,
+    free: Number,
+    row: Number,
+    collumn: Number,
+});
+const Schedule = mongoose.model('Schedule', {
+    subject: String,
+    start: Date,
+    end: Date,
+    halls: Number
+});
+const Request = mongoose.model('Request', {
+    subject: String,
+    start: Date,
+    end: Date,
+    link: String,
+    type: String, // can be announce 'cancel', 'schedule' exam, announce 'view' sheet
+});
 
 
-// async function addToSchedule(subName, startTime, endTime, halls) {
-//     await connectDB()
-//     const newSchedule = new Schedule({
-//         subject: subName,
-//         start: startTime,
-//         end: endTime,
-//         halls: halls,
-//         // request type
-//     });
+async function addToSchedule(subName, startTime, endTime, halls) {
+    await connectDB()
+    const newSchedule = new Schedule({
+        subject: subName,
+        start: startTime,
+        end: endTime,
+        halls: halls,
+        // request type
+    });
 
-//     try {
-//         const result = await newSchedule.save();
-//         console.log('Schedule inserted:', result);
-//     } catch (error) {
-//         console.error('Error inserting schedule:', error);
-//     }
-// }
+    try {
+        const result = await newSchedule.save();
+        console.log('Schedule inserted:', result);
+    } catch (error) {
+        console.error('Error inserting schedule:', error);
+    }
+}
 
 
 export async function addToRequests(subName, startTime, endTime, link, requestType, fileName) {
@@ -94,47 +94,47 @@ export async function addToRequests(subName, startTime, endTime, link, requestTy
     }
 }
 
-// // ALSO ADD TO FREE THE NUMBER OF HALLS ONCE REQUEST DONE (KEEP CHECKING TIME), ALSO DO SAME FOR REQUESTS?
-// async function removeFromScheduled(subName) {
-//     await connectDB()
-//     let toChange = []
-//     try {
-//         const result = await Schedule.findOne({ subject: subName });
-//         if (result) {
-//             numOfHalls = result.halls
-//             const getHalls = await Hall.find({})
-//             let i = 0
-//             while (numOfHalls > 0) {
-//                 while (getHalls[i].hall == 1) {
-//                     i++
-//                 }
-//                 toChange.push(getHalls[i]._id)
-//                 i++
-//                 numOfHalls--
-//             }
-//         } else {
-//             console.log(`No schedule found with subject: ${subName}`);
-//         }
-//     } catch (error) {
-//         console.error('Error removing schedule:', error);
-//     }
-//     try {
-//         await Hall.updateMany({ _id: { $in: toChange } }, { $set: { free: 1 } });
-//         console.log('updated db for halls');
-//     } catch (err) {
-//         console.error(err);
-//     }
-//     try {
-//         const result = await Schedule.deleteOne({ subject: subName });
-//         if (result.deletedCount > 0) {
-//             console.log(`Successfully deleted schedule with subject: ${subName}: `, result);
-//         } else {
-//             console.log(`No schedule found with subject: ${subName}`);
-//         }
-//     } catch (error) {
-//         console.error('Error removing schedule:', error);
-//     }
-// }
+// ALSO ADD TO FREE THE NUMBER OF HALLS ONCE REQUEST DONE (KEEP CHECKING TIME), ALSO DO SAME FOR REQUESTS?
+async function removeFromScheduled(subName) {
+    await connectDB()
+    let toChange = []
+    try {
+        const result = await Schedule.findOne({ subject: subName });
+        if (result) {
+            numOfHalls = result.halls
+            const getHalls = await Hall.find({})
+            let i = 0
+            while (numOfHalls > 0) {
+                while (getHalls[i].hall == 1) {
+                    i++
+                }
+                toChange.push(getHalls[i]._id)
+                i++
+                numOfHalls--
+            }
+        } else {
+            console.log(`No schedule found with subject: ${subName}`);
+        }
+    } catch (error) {
+        console.error('Error removing schedule:', error);
+    }
+    try {
+        await Hall.updateMany({ _id: { $in: toChange } }, { $set: { free: 1 } });
+        console.log('updated db for halls');
+    } catch (err) {
+        console.error(err);
+    }
+    try {
+        const result = await Schedule.deleteOne({ subject: subName });
+        if (result.deletedCount > 0) {
+            console.log(`Successfully deleted schedule with subject: ${subName}: `, result);
+        } else {
+            console.log(`No schedule found with subject: ${subName}`);
+        }
+    } catch (error) {
+        console.error('Error removing schedule:', error);
+    }
+}
 
 
 async function removeFromRequests(subName) {
@@ -204,16 +204,16 @@ function hallNeeded(fileName) {
 }
 
 
-// async function main() {
-//     const a = new Date(2023, 10, 20, 12, 30, 0)
-//     const b = new Date(2023, 10, 20, 12, 45, 0)
-//     const c = new Date(2023, 10, 20, 12, 50, 0)
-//     // await addToSchedule('CN',a,b,6)
-//     // await removeFromScheduled('CN')
-//     // await addToRequests('CN', a, b, 'as', 'cancel', 'staff.xlsx')
-//     // await addToRequests('CN', a, c, 'as', 'cancel', 'staff.xlsx')
-// }
-// main().catch(err => console.log(err))
+async function main() {
+    const a = new Date(2023, 10, 20, 12, 30, 0)
+    const b = new Date(2023, 10, 20, 12, 45, 0)
+    const c = new Date(2023, 10, 20, 12, 50, 0)
+    // await addToSchedule('CN',a,b,6)
+    await removeFromScheduled('CN')
+    // await addToRequests('CN', a, b, 'as', 'cancel', 'staff.xlsx')
+    // await addToRequests('CN', a, c, 'as', 'cancel', 'staff.xlsx')
+}
+main().catch(err => console.log(err))
 
 // USER SENDS REQ,
 // 1. CHECK IF REQ SECTION FULL HAS ONE, IF IT HAS, DENY

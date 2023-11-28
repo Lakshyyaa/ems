@@ -1,24 +1,26 @@
-import xlsx from 'xlsx';
-import fs from 'fs';
-import mongoose from 'mongoose';
-import axios from 'axios';
-import nodemailer from 'nodemailer';
-import { config as dotenvConfig } from 'dotenv';
-import connectDB from '../model/db.js';
-dotenvConfig(); // Execute the config method
-import { Hall, Teacher } from '../model/db.js';
+const xlsx = require('xlsx');
+const fs = require('fs');
+const mongoose = require('mongoose');
+const axios = require('axios');
+const nodemailer = require('nodemailer')
+const connectDB = require('./db.js');
+require('dotenv').config();
+const Hall = mongoose.model('Hall', {
+    hall: Number,
+    free: Number,
+    row: Number,
+    collumn: Number,
+});
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {
-        user: 'lnmiitems123@gmail.com',
-        pass: process.env.PW,
+        user: 'lnmiitems123@gmail.com', // replace with your Gmail email address
+        pass: process.env.PW,        // replace with your Gmail password (or app-specific password)
     },
 });
-// Rest of your code...
-
 // ADD A FEATURE TO ALTER SEATS? NOT IMPORTANT THOUGH
 
 // AFTER SEATGEN INITIATED BY THE ADMIN, IT MAY RETURN DENY AS IT COULD
@@ -41,6 +43,11 @@ async function fetchSheet(filePath) {
 
 async function invigilationGen(newData, subName) {
     await connectDB();
+    const Teacher = mongoose.model('Teacher', {
+        name: String,
+        subject: String,
+        free: Number,
+    });
     let teachers = await Teacher.find();
     const numOfTeachers = teachers.length;
     let i = 0;

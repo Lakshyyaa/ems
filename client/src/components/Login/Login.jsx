@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './login.css'; // Import the CSS file
-import {Link,useNavigate} from 'react-router-dom';
+import {Link,useLocation,useNavigate} from 'react-router-dom';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useProfile } from '../Context/Context';
+import checkAuth from './checkAuth';
 const Login = () => {
   const navigate=useNavigate();
   const {updateProfile}=useProfile()
@@ -12,8 +13,13 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState('');
    const [loginSuccess, setLoginSuccess] = useState(false);
   const[loading,setLoading]=useState(false)
+  const rolesArray=["admin","teacher"]
+  const route=useLocation()
+  useEffect(() => {
+    console.log("I am here->  ")
+    //checkAuth(rolesArray,route,navigate);
+  }, []);
   const handleLogin = async (e) => {
-  
     
     const formData={
       email:email,
@@ -26,12 +32,8 @@ const Login = () => {
     try {
       setLoading(true)
       const response = await axios.post('http://localhost:3001/login',formData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials:true,
-      }
+        {withCredentials:true,},
+      
       );
       setLoading(false)
       if (response.status === 200) {
