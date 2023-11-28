@@ -1,0 +1,146 @@
+body .video {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: -1;
+   
+}
+
+body .video video {
+    height: 100%;
+    width: 100%;
+    -o-object-fit: cover;
+    object-fit: cover;
+    
+  }
+  /* TeacherDashboard.module.css */
+
+.container {
+  
+    display: flex;
+    flex-direction: column;
+    margin: 5rem;
+    padding-bottom: 1rem;
+/* From https://css.glass */
+background: rgba(177, 208, 224, 0.13);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(5.4px);
+-webkit-backdrop-filter: blur(5.4px);
+border: 1px solid rgba(177, 208, 224, 0.3);
+  }
+  .dashboard_heading{
+    align-self: center;
+    color:hsl(200deg 61.32% 91.04%);
+    font-size: 25px;
+    font-weight: 500;
+    width:100%;
+    text-align: center;
+    background-color: none;
+    border-top-right-radius: 1rem;
+    border-top-left-radius: 1rem;
+    background: rgba(64, 104, 130, 0.5647058823529412);
+    padding:0.5rem 0;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(1.5px);
+    -webkit-backdrop-filter: blur(1.5px);
+    border: 1px solid rgba(64, 104, 130, 0.3);
+  }
+  .ticket_status{
+    height: 17rem;
+    padding: 2rem;
+    margin: 2rem 0;
+   
+    background: rgba(105, 152, 171, 0.3764705882352941);
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(0px);
+-webkit-backdrop-filter: blur(0px);
+  }
+  .ticketList {
+    list-style: none;
+    padding: 0;
+  }
+  .my_tickets{
+    font-size: 25px;
+    color:hsl(200deg 61.32% 91.04%);
+    font-weight: 500;
+    
+  }
+  .ticketListItem {
+    margin-bottom: 10px;
+   /* From https://css.glass */
+background: rgba(0, 0, 4, 0.36);
+
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(5px);
+-webkit-backdrop-filter: blur(5px);
+border: 1px solid rgba(0, 0, 4, 0.3);
+  }
+  
+  .createTicketForm {
+    margin-top: 20px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Add more styles as needed */
+  .button {
+    align-self: center;
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .new_button{
+    align-self: flex-end;
+    margin-right:2rem;
+   /* From https://css.glass */
+background: rgba(0, 0, 4, 0.36);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(5px);
+-webkit-backdrop-filter: blur(5px);
+border: 1px solid rgba(0, 0, 4, 0.3);
+  }
+  .modalOverlay {
+  
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modalContent {
+ /* From https://css.glass */
+background: rgba(105, 152, 171, 0.3764705882352941);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(0px);
+-webkit-backdrop-filter: blur(0px);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  .close_button{
+    align-self: flex-end;
+    color: red;
+    font-weight: 800;
+  }
+ 

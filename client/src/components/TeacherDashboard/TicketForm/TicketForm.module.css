@@ -1,0 +1,13 @@
+.ticket_form{
+    display: flex;
+    flex-direction: column;
+}
+.form_inputs{
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+}
+.form_inputs:first-child{
+    flex-direction: row;
+    justify-content: space-around;
+}
