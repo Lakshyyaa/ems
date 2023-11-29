@@ -204,16 +204,16 @@ function hallNeeded(fileName) {
 }
 
 
-// async function main() {
-//     const a = new Date(2023, 10, 20, 12, 30, 0)
-//     const b = new Date(2023, 10, 20, 12, 45, 0)
-//     const c = new Date(2023, 10, 20, 12, 50, 0)
-//     // await addToSchedule('CN',a,b,6)
-//     // await removeFromScheduled('CN')
-//     // await addToRequests('CN', a, b, 'as', 'cancel', 'staff.xlsx')
-//     // await addToRequests('CN', a, c, 'as', 'cancel', 'staff.xlsx')
-// }
-// main().catch(err => console.log(err))
+async function main() {
+    const a = new Date(2023, 10, 20, 12, 30, 0)
+    const b = new Date(2023, 10, 20, 12, 45, 0)
+    const c = new Date(2023, 10, 20, 12, 50, 0)
+    // await addToSchedule('CN',a,b,6)
+    // await removeFromScheduled('CN')
+    // await addToRequests('CN', a, b, 'as', 'cancel', 'staff.xlsx')
+    // await addToRequests('CN', a, c, 'as', 'cancel', 'staff.xlsx')
+}
+main().catch(err => console.log(err))
 
 // USER SENDS REQ,
 // 1. CHECK IF REQ SECTION FULL HAS ONE, IF IT HAS, DENY

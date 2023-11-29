@@ -4,6 +4,8 @@ import axios from "axios";
 import { useProfile } from "../../Context/Context";
 
 const TicketForm = ({ tickets, setTickets }) => {
+
+  const { profile } = useProfile();
   const [newTicketData, setNewTicketData] = useState({
     date: "",
     start_time: "",
@@ -11,8 +13,8 @@ const TicketForm = ({ tickets, setTickets }) => {
     file: null,
     subject: "",
     request_type: "",
+    profile,
   });
-  const { profile } = useProfile();
   const handleCreateTicket = async (e) => {
     console.log();
     e.preventDefault();

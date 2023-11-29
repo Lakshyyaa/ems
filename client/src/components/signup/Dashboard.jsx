@@ -1,5 +1,4 @@
-import useAuth from "../Login/useAuth";
-
+import useAuth from "../Login/checkAuth";
 const Dashboard = () => {
   const rolesArray = ["admin", "user", ""];
   // useEffect(()=>{

@@ -30,11 +30,16 @@ const Connection = async () => {
 };
 
 app.post("/login", async (req, res) => {
-  const { email, password, role, name, free, subject, dep } = req.body;
+  const { email, password, role } = req.body;
+  // const name="Ayush"
+  // const free=1
+  // const subject=["CN", "AI"]
+  // const dep=""
   // try {
   //   const user = await User.findOne({ email });
   //   if (user) return res.status(422).json({ error: "Email Already exists" });
-  //   const userData = new User({ email, password,role});
+  //   const userData = new User({ email, password, role, name, free, subject, dep });
+  //   // how to save the rest of the deets
   //   await userData.save();
   // } catch (error) {
   //   console.error("Error during signup:", error);
@@ -59,10 +64,12 @@ app.post("/login", async (req, res) => {
     res.cookie("jwtoken", token, {
       expires: new Date(Date.now() + 250000),
       httpOnly: true,
+      path: "/",
     });
     // If both email and password are correct, send a success response
     return res.status(200).json({ message: "This is a protected route", user });
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Error during login:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -85,11 +92,13 @@ app.post("/protected-route", Authenticate, async (req, res) => {
 app.post("/tickets", async (req, res) => {
   // const user = req.user
   const { date, start_time, end_time, file, subject, request_type, profile } = req.body;
+  console.log(profile)
   const { free, dep, _id } = profile // object with the userdata
   // also the request db has a field for file url in github
   // HERE THE FILE WILL BE PUSHED TO GITHUB
   // AND ITS URL ALONG WITH ALL OTHER OBJECTS WITH REQUEST TYPE PUSHED IN DB
-  // free, dep, teacher_id, and all above
+  // free, dep, teacher_id, and all above and halls to mark number of halls taken and a teacher array to show
+  // which teacher occupied which happens when approved
   console.log(req.body);
   if (date && start_time && file && subject && end_time && request_type) {
     // addToRequests(subject,start_time,end_time,date,request_type,file,teachername)

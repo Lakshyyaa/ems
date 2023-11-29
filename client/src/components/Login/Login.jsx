@@ -1,24 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './login.css'; // Import the CSS file
-import {Link,useNavigate} from 'react-router-dom';
+import {Link,useNavigate,useLocation} from 'react-router-dom';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useProfile } from '../Context/Context';
+import checkAuth from './checkAuth'
 const Login = () => {
   const navigate=useNavigate();
-  const {updateProfile}=useProfile()
+  const {profile,updateProfile}=useProfile()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
    const [loginSuccess, setLoginSuccess] = useState(false);
   const[loading,setLoading]=useState(false)
-  const handleLogin = async (e) => {
-  
-    
+  const rolesArray = ["admin", "teacher"]
+  const route = useLocation()
+  useEffect(() => {
+    console.log("I am here->  ")
+    //checkAuth(rolesArray,route,navigate);
+  }, []);
+  const handleLogin = async (e) => {    
     const formData={
       email:email,
       password:password,
       role:e.target.name,
+      name:"",
+      free:0,
+      subject:["CN","AI"],
+      dep:"",
+      _id:""
     }
     console.log(formData,e.target.name)
     e.preventDefault();
@@ -27,15 +37,17 @@ const Login = () => {
       setLoading(true)
       const response = await axios.post('http://localhost:3001/login',formData,
       {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        // headers: {
+        //   "Content-Type": "application/json",
+        // },
         withCredentials:true,
       }
       );
       setLoading(false)
       if (response.status === 200) {
+        console.log(response.data.user)
         updateProfile(response.data.user)
+        console.log(profile)
         setErrorMessage('');
          setLoginSuccess(true);
         console.log('Login successful!');
