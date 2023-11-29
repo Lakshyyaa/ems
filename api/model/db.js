@@ -11,6 +11,9 @@ const Request = mongoose.model('Request', {
     end: Date,
     link: String,
     type: String, // can be announce 'cancel', 'schedule' exam, announce 'view' sheet
+    halls: Number,
+    state: String,
+    teachers: [String]
 });
 const connectDB = async () => {
     await mongoose.connect('mongodb://127.0.0.1:27017/teacherDB');

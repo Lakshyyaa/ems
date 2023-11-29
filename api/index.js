@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 import { Authenticate } from "./middleware/authenticate.js";
 import cookieParser from "cookie-parser";
 import { addToRequests } from "./functions/raise.js";
+import { Request } from "./model/db.js";
 
 const app = express();
 dotenv.config();
@@ -92,16 +93,41 @@ app.post("/protected-route", Authenticate, async (req, res) => {
 app.post("/tickets", async (req, res) => {
   // const user = req.user
   const { date, start_time, end_time, file, subject, request_type, profile } = req.body;
-  console.log(profile)
   const { free, dep, _id } = profile // object with the userdata
   // also the request db has a field for file url in github
   // HERE THE FILE WILL BE PUSHED TO GITHUB
   // AND ITS URL ALONG WITH ALL OTHER OBJECTS WITH REQUEST TYPE PUSHED IN DB
   // free, dep, teacher_id, and all above and halls to mark number of halls taken and a teacher array to show
   // which teacher occupied which happens when approved
-  console.log(req.body);
+  console.log(file);
   if (date && start_time && file && subject && end_time && request_type) {
     // addToRequests(subject,start_time,end_time,date,request_type,file,teachername)
+    // Combine date string and time string to create complete date-time strings
+    
+    // HERE GITHUB PUSH HAPPENS FIRST
+    const startDateTimeString = `${date}T${start_time}`;
+    const endDateTimeString = `${date}T${end_time}`;
+
+    // Create Date objects for start_time and end_time
+    const startTime = new Date(startDateTimeString);
+    const endTime = new Date(endDateTimeString);
+
+    const newRequest =  new Request({
+      subject: subject,
+      start: startTime,
+      end: endTime,
+      link: 'linklele',
+      type: request_type, // Adjust the type accordingly
+      halls:12,
+      state:'pending'
+    });
+    await newRequest.save()
+      .then(savedRequest => {
+        console.log('Request saved successfully:', savedRequest);
+      })
+      .catch(error => {
+        console.error('Error saving request:', error);
+      });
     res.status(200).json({ message: "Ticket Recieved by Backend" });
   } else {
     res.status(401).json({ message: "Ticket Package Faulty" });
@@ -115,3 +141,4 @@ Connection();
 
 // add path to get all tickets by teacher name
 // teacher sends a teacher id with each req, which is the mongodb id of the teacher object from the userSchema
+// frontend checks no teacher can do same subject request again using teahcer(mongo id) and subname

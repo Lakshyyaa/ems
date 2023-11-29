@@ -95,7 +95,7 @@ const TicketForm = ({ tickets, setTickets }) => {
           </select>
         </div>
         <div className={styles.form_inputs}>
-          <label htmlFor="excel">Upload</label>
+          <label htmlFor="excel">Date</label>
           <input
             type="date"
             value={newTicketData.date}
