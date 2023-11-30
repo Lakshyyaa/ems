@@ -1,26 +1,27 @@
 // THE BELOW CODE IS FOR THE 3 FUNCTIONS: UPLOAD, FETCH AND DELETE XLSX TO GITHUB
 
-require('dotenv').config();
-const { Octokit } = require('@octokit/rest');
-const fs = require('fs');
-const axios = require('axios');
-const xlsx = require('xlsx')
+import dotenv from "dotenv";
+dotenv.config();
+import { Octokit } from '@octokit/rest';
+import fs from 'fs';
+import axios from 'axios';
+import * as xlsx from 'xlsx';
 const token = process.env.GITHUB_TOKEN;
 const octokit = new Octokit({
     auth: token,
 });
-const owner = 'AyushMathpal';
+const owner = 'Lakshyyaa';
 const repo = 'emscdn';
 const branch = 'main';
 
 
-async function uploadSheet(filePath) {
+async function uploadSheet(file, name) {
     try {
-        const fileContent = fs.readFileSync(filePath, 'base64');
+        const fileContent = Buffer.from(file.buffer).toString('base64');
         const response = await octokit.repos.createOrUpdateFileContents({
             owner,
             repo,
-            path: 'files/' + filePath, // Replace with the desired path in your repository
+            path: 'files/' + name, // Replace with the desired path in your repository
             message: 'Upload file', // Commit message
             content: fileContent, // Convert content to base64
             branch,
@@ -56,8 +57,8 @@ async function deleteSheet(sheetName) {
 }
 
 
-async function fetchSheet(filePath) {
-    const url = `https://api.github.com/repos/AyushMathpal/emscdn/contents/files/${filePath}`;
+async function fetchSheet(link) {
+    const url = `https://api.github.com/repos/AyushMathpal/emscdn/contents/files/${link}`;
     try {
         const response = await axios.get(url);
         const base64Content = response.data.content;
@@ -72,3 +73,4 @@ async function fetchSheet(filePath) {
         throw error;
     }
 }
+export {uploadSheet, fetchSheet, deleteSheet}

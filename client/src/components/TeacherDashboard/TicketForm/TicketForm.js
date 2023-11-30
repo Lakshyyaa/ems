@@ -13,9 +13,9 @@ const TicketForm = ({ tickets, setTickets }) => {
     file: null,
     subject: "",
     request_type: "",
-    free:profile.free,
-    dep:profile.dep,
-    _id:profile._id
+    free: profile.free,
+    dep: profile.dep,
+    _id: profile._id
   });
   const handleCreateTicket = async (e) => {
     console.log(newTicketData.file);
@@ -27,11 +27,11 @@ const TicketForm = ({ tickets, setTickets }) => {
       newTicketData.end_time !== "" &&
       newTicketData.file !== null &&
       newTicketData.subject !== "" &&
-      newTicketData.request_type!=="" &&
-      newTicketData.free!=="" &&
-      newTicketData._id!==""
+      newTicketData.request_type !== "" &&
+      newTicketData.free !== "" &&
+      newTicketData._id !== ""
     ) {
-      
+
       try {
         const response = await axios.post(
           "http://localhost:3001/tickets",
@@ -95,7 +95,7 @@ const TicketForm = ({ tickets, setTickets }) => {
             <option value="cancel" >
               Cancel
             </option>
-            
+
           </select>
         </div>
         <div className={styles.form_inputs}>
@@ -137,7 +137,7 @@ const TicketForm = ({ tickets, setTickets }) => {
         <div className={styles.form_inputs}>
           <label htmlFor="excel">Upload</label>
           <input
-          
+
             type="file"
             required
             id="excel"

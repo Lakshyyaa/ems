@@ -10,6 +10,8 @@ import cookieParser from "cookie-parser";
 import { addToRequests } from "./functions/raise.js";
 import { Request } from "./model/db.js";
 import exceljs from "exceljs"
+import { uploadSheet } from "./functions/helper.js";
+import xlsx from 'xlsx';
 import multer from "multer";
 const app = express();
 dotenv.config();
@@ -34,8 +36,8 @@ const Connection = async () => {
 };
 
 app.post("/login", async (req, res) => {
-  
-   const { email, password, role } = req.body;
+
+  const { email, password, role } = req.body;
   // const name="Ayush"
   // const free=1
   // const subject=["CN", "AI"]
@@ -84,7 +86,7 @@ app.post("/protected-route", Authenticate, async (req, res) => {
   const { roles, route } = req.body;
   const _id = user._id;
   const userCheck = await User.findOne({ _id });
-  
+
   if (!roles.includes(userCheck.role)) {
     res
       .status(401)
@@ -94,10 +96,12 @@ app.post("/protected-route", Authenticate, async (req, res) => {
   }
 });
 // receiving tickets from the teacher to put in the requests db
-app.post("/tickets",upload.single('file'), async (req, res) => {
+app.post("/tickets", upload.single('file'), async (req, res) => {
   // const user = req.user
-  const { date, start_time, end_time, file, subject, request_type,_id } = req.body;
-  console.log(date,start_time,end_time,file,subject,request_type,_id,req.file)
+  const { date, start_time, end_time, subject, request_type, _id } = req.body;
+  const file = (req.file)
+  console.log(file)
+  // console.log(date, start_time, end_time, subject, request_type, _id, req.file)
   // object with the userdata
   // also the request db has a field for file url in github
   // HERE THE FILE WILL BE PUSHED TO GITHUB
@@ -108,7 +112,7 @@ app.post("/tickets",upload.single('file'), async (req, res) => {
   if (date && start_time && file && subject && end_time && request_type) {
     // addToRequests(subject,start_time,end_time,date,request_type,file,teachername)
     // Combine date string and time string to create complete date-time strings
-    
+
     // HERE GITHUB PUSH HAPPENS FIRST
     const startDateTimeString = `${date}T${start_time}`;
     const endDateTimeString = `${date}T${end_time}`;
@@ -116,16 +120,25 @@ app.post("/tickets",upload.single('file'), async (req, res) => {
     // Create Date objects for start_time and end_time
     const startTime = new Date(startDateTimeString);
     const endTime = new Date(endDateTimeString);
-
-    const newRequest =  new Request({
+    try {
+      await uploadSheet(file, (_id) + subject + '.xlsx')
+    }
+    catch (err) {
+      console.error(err)
+    }
+    const newRequest = await new Request({
       subject: subject,
       start: startTime,
       end: endTime,
-      link: 'linklele',
+      link: (_id) + subject + '.xlsx',
       type: request_type, // Adjust the type accordingly
-      halls:12,
-      state:'pending'
+      state: 'pending'
     });
+    // const fileBuffer = await file.buffer;
+    // const workbook = await xlsx.read(fileBuffer, { type: 'buffer' });
+    // const sheetName = await workbook.SheetNames[0];
+    // const worksheet = await workbook.Sheets[sheetName];
+    // const newfile = await xlsx.utils.sheet_to_json(worksheet);
     await newRequest.save()
       .then(savedRequest => {
         console.log('Request saved successfully:', savedRequest);
