@@ -9,7 +9,8 @@ import { Authenticate } from "./middleware/authenticate.js";
 import cookieParser from "cookie-parser";
 import { addToRequests } from "./functions/raise.js";
 import { Request } from "./model/db.js";
-
+import exceljs from "exceljs"
+import multer from "multer";
 const app = express();
 dotenv.config();
 app.use(
@@ -21,6 +22,8 @@ app.use(
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 const Connection = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URL);
@@ -31,7 +34,8 @@ const Connection = async () => {
 };
 
 app.post("/login", async (req, res) => {
-  const { email, password, role } = req.body;
+  
+   const { email, password, role } = req.body;
   // const name="Ayush"
   // const free=1
   // const subject=["CN", "AI"]
@@ -44,10 +48,10 @@ app.post("/login", async (req, res) => {
   //   await userData.save();
   // } catch (error) {
   //   console.error("Error during signup:", error);
-  // }
+  //}
   try {
     const user = await User.findOne({ email });
-    //  console.log(user);
+    // console.log(user);
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -55,7 +59,7 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     const isMatch = await bcrypt.compare(password, user.password);
     const token = await user.generateAuthToken();
-    console.log(token);
+    //console.log(token);
     //res.cookie("test1","hello")
 
     // Check if the password is correct
@@ -80,7 +84,7 @@ app.post("/protected-route", Authenticate, async (req, res) => {
   const { roles, route } = req.body;
   const _id = user._id;
   const userCheck = await User.findOne({ _id });
-  console.log(userCheck.role);
+  
   if (!roles.includes(userCheck.role)) {
     res
       .status(401)
@@ -90,16 +94,17 @@ app.post("/protected-route", Authenticate, async (req, res) => {
   }
 });
 // receiving tickets from the teacher to put in the requests db
-app.post("/tickets", async (req, res) => {
+app.post("/tickets",upload.single('file'), async (req, res) => {
   // const user = req.user
-  const { date, start_time, end_time, file, subject, request_type, profile } = req.body;
-  const { free, dep, _id } = profile // object with the userdata
+  const { date, start_time, end_time, file, subject, request_type,_id } = req.body;
+  console.log(date,start_time,end_time,file,subject,request_type,_id,req.file)
+  // object with the userdata
   // also the request db has a field for file url in github
   // HERE THE FILE WILL BE PUSHED TO GITHUB
   // AND ITS URL ALONG WITH ALL OTHER OBJECTS WITH REQUEST TYPE PUSHED IN DB
   // free, dep, teacher_id, and all above and halls to mark number of halls taken and a teacher array to show
   // which teacher occupied which happens when approved
-  console.log(file);
+  //console.log("file->",file.name);
   if (date && start_time && file && subject && end_time && request_type) {
     // addToRequests(subject,start_time,end_time,date,request_type,file,teachername)
     // Combine date string and time string to create complete date-time strings

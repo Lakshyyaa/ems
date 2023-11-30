@@ -13,10 +13,12 @@ const TicketForm = ({ tickets, setTickets }) => {
     file: null,
     subject: "",
     request_type: "",
-    profile,
+    free:profile.free,
+    dep:profile.dep,
+    _id:profile._id
   });
   const handleCreateTicket = async (e) => {
-    console.log();
+    console.log(newTicketData.file);
     e.preventDefault();
     // Make a POST request to create a new ticket using Axios
     if (
@@ -25,22 +27,24 @@ const TicketForm = ({ tickets, setTickets }) => {
       newTicketData.end_time !== "" &&
       newTicketData.file !== null &&
       newTicketData.subject !== "" &&
-      newTicketData.request_type!==""
+      newTicketData.request_type!=="" &&
+      newTicketData.free!=="" &&
+      newTicketData._id!==""
     ) {
-      console.log("data->", newTicketData);
+      
       try {
         const response = await axios.post(
           "http://localhost:3001/tickets",
           newTicketData,
           {
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'multipart/form-data'
             },
             withCredentials: true,
           }
         );
         if (response.status === 200) {
-          console.log("Ticket Submitted", response);
+          console.log("Ticket Submitted",response);
         }
       } catch (error) {
         console.log("Ticket Creation Failed:", error);
@@ -133,6 +137,7 @@ const TicketForm = ({ tickets, setTickets }) => {
         <div className={styles.form_inputs}>
           <label htmlFor="excel">Upload</label>
           <input
+          
             type="file"
             required
             id="excel"
