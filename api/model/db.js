@@ -13,11 +13,12 @@ const Request = mongoose.model('Request', {
     type: String, // can be announce 'cancel', 'schedule' exam, announce 'view' sheet
     halls: Number,
     state: String,
-    teachers: [String]
+    teachers: [String],
+    id:String
 });
 import userSchema from "./userSchema.js";
 const connectDB = async () => {
-    await mongoose.connect('mongodb://127.0.0.1:27017/teacherDB');
+    await mongoose.connect(process.env.MONGO_URL);
     console.log('Connected to MongoDB');
     // for (let i = 0; i < 10; i++) {
     //     const newHall = new Hall({

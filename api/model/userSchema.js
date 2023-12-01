@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   role:String,
   name: String, 
   free: Number,
-  subject: [String],
+  subjects: [String],
   dep: String
 });
 userSchema.pre("save", async function (next) {

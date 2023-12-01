@@ -45,6 +45,7 @@ const TicketForm = ({ tickets, setTickets }) => {
         );
         if (response.status === 200) {
           console.log("Ticket Submitted",response);
+          window.location.reload();
         }
       } catch (error) {
         console.log("Ticket Creation Failed:", error);
@@ -53,7 +54,7 @@ const TicketForm = ({ tickets, setTickets }) => {
       alert("Please enter the data in correct format");
     }
   };
-  const [subjects, setSubjects] = useState(["PTS", "M1", "M2"]);
+  const subjects=profile.subject;
   return (
     <div className={styles.ticket_form}>
       <form>

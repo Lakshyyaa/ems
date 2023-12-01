@@ -6,24 +6,35 @@ import TicketForm from "./TicketForm/TicketForm";
 import useAuth from "../Login/checkAuth";
 import checkAuth from "../Login/checkAuth";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useProfile } from "../Context/Context";
+import ExcelUploader from "../../ExcelUploader";
 Modal.setAppElement("#root");
 const TeacherDashboard = () => {
-  const [tickets, setTickets] = useState([
-    { status: "pending", date: "", time: "", file: "", subject: "" },
-  ]);
+  const [tickets, setTickets] = useState([]);
   const route = useLocation().pathname;
   const navigate = useNavigate();
-  const rolesArray = ["teacher"]
+  const rolesArray = ["teacher"];
+  const { profile } = useProfile();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen2, setIsModalOpen2] = useState(false);
   useEffect(() => {
-    console.log("I am here->  ")
+    console.log("I am here->  ");
     checkAuth(rolesArray, route, navigate);
     // Fetch tickets for the teacher when the component mounts
     // You'll need to replace 'teacherId' with the actual ID of the logged-in teacher
-    // axios
-    //   .get(`tickets/teacherId`)
-    //   .then((response) => setTickets(response.data))
-    //   .catch((error) => console.error("Error fetching tickets:", error));
+    const fetchTicket = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:3001/teacher/${profile._id}`
+        );
+        setTickets(res.data.requests);
+        console.log(tickets);
+      } catch (err) {
+        console.log("Error fetching tickets", err);
+      }
+    };
+    fetchTicket();
+    
   }, []);
 
   const openModal = () => {
@@ -32,6 +43,14 @@ const TeacherDashboard = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    // Reset form or other state if needed when closing the modal
+  };
+  const openModal2 = () => {
+    setIsModalOpen2(true);
+  };
+
+  const closeModal2 = () => {
+    setIsModalOpen2(false);
     // Reset form or other state if needed when closing the modal
   };
 
@@ -45,46 +64,61 @@ const TeacherDashboard = () => {
           <div className={styles.ticket_status}>
             <span className={styles.my_tickets}>My Tickets</span>
             <div className={styles.ticketList}>
-              {tickets.map((ticket, index) => (
+              {tickets?.map((ticket, index) => (
                 <div key={index} className={styles.ticketListItem}>
-                  <div>
-                    {" "}
-                    {ticket.status !== "" ? `Status: ${ticket.status}` : null}
-                  </div>
+                  
+                  <div> {`Status: ${ticket.state}`}</div>
                   <div> {`Date: ${ticket.date}`}</div>
-                  <div> {`Start-Time: ${ticket.start_time}`}</div>
-                  <div> {`End-Time: ${ticket.end_time}`}</div>
+                  <div> {`Start-Time: ${ticket.start}`}</div>
+                  <div> {`End-Time: ${ticket.end}`}</div>
                   <div> {`Subject: ${ticket.subject}`}</div>
                 </div>
               ))}
             </div>
           </div>
-
-          <button
-            className={`${styles.button} ${styles.new_button}`}
-            onClick={openModal}
-          >
-            Create New Ticket
-          </button>
-
-          {/* Modal for the form */}
-          <Modal
-            isOpen={isModalOpen}
-            onRequestClose={closeModal}
-            contentLabel="Create New Ticket Modal"
-            className={styles.modalContent}
-            overlayClassName={styles.modalOverlay}
-          >
-            <button onClick={closeModal} className={styles.close_button}>
-              X
+          <div className={styles.teacher_buttons}>
+            <button
+              className={`${styles.button} ${styles.new_button}`}
+              onClick={openModal}
+            >
+              Create New Ticket
             </button>
-            <TicketForm tickets setTickets />
-            {/* Add form fields for new ticket data */}
-          </Modal>
+
+            {/* Modal for the form */}
+            <Modal
+              isOpen={isModalOpen}
+              onRequestClose={closeModal}
+              contentLabel="Create New Ticket Modal"
+              className={styles.modalContent}
+              overlayClassName={styles.modalOverlay}
+            >
+              <button onClick={closeModal} className={styles.close_button}>
+                X
+              </button>
+              <TicketForm tickets setTickets />
+              {/* Add form fields for new ticket data */}
+            </Modal>
+            <button
+              className={`${styles.button} ${styles.new_button}`}
+              onClick={openModal2}
+            >
+              Show Class Progress
+            </button>
+            <Modal
+              isOpen={isModalOpen2}
+              onRequestClose={closeModal2}
+              contentLabel="Show Class Progress"
+              className={styles.modalContent}
+              overlayClassName={styles.modalOverlay}
+            >
+              <button onClick={closeModal2} className={styles.close_button}>
+                X
+              </button>
+              <ExcelUploader />
+              {/* Add form fields for new ticket data */}
+            </Modal>
+          </div>
         </div>
-      </div>
-      <div className={styles.video}>
-        {/* <video src="background.mp4" muted playsInline autoPlay loop></video> */}
       </div>
     </div>
   );

@@ -145,6 +145,7 @@ app.post("/tickets", upload.single('file'), async (req, res) => {
       link: (_id) + subject + '.xlsx',
       type: request_type, // Adjust the type accordingly
       state: 'pending',
+      id:_id,
       halls: Math.ceil(newfile.length / hallsize)
     });
     // const fileBuffer = await file.buffer;
@@ -164,6 +165,85 @@ app.post("/tickets", upload.single('file'), async (req, res) => {
     res.status(401).json({ message: "Ticket Package Faulty" });
   }
 });
+
+app.post("/teacher",async(req,res)=>{
+  const {name,email,password,subjects,free,dep,role}=req.body
+   try {
+    const user = await User.findOne({ email });
+    if (user) return res.status(201).json({message:"Email Already Exists"});
+    const userData = new User({ email,password,role,name,free,subjects,dep});
+    // how to save the rest of the deets
+    await userData.save();
+  } catch (error) {
+    console.error("Error in Adding Teacher:", error);
+  }
+})
+app.get('/teacher/:_id',async(req,res)=>{
+  const {name,email,password,subjects,free,dep,role}=req.body;
+  const id=req.params._id
+   try {
+    const requests = await Request.find({id});
+    res.status(200).json({ requests });
+  } catch (error) {
+    console.error("Error in Adding Teacher:", error);
+  }
+});
+app.get('/admin/:_id',async(req,res)=>{
+  const {name,email,password,subjects,free,dep,role}=req.body;
+  const id=req.params._id
+   try {
+    const requests = await Request.find();
+    res.status(200).json({ requests });
+  } catch (error) {
+    console.error("Error in Adding Teacher:", error);
+  }
+});
+app.get("/logout", (req, res) => {
+  // Clear the HTTP-only cookie on the server
+  res.clearCookie("jwtoken", { httpOnly: true });
+  // Send a response (you can customize this based on your needs)
+  console.log("The request is here")
+  res.status(200).json({ success: true, message: "Logout successful" });
+});
+app.post('/admin/check', async (req, res) => {
+  const {_id}= req.body;
+  
+  try {
+    const conditionsmet = await checks(_id)
+    if (conditionsmet) {
+      res.status(200).json({ message: 'Conditions are fulfilled' });
+    }
+    else {
+      res.status(400).json({ message: 'Conditions are not fulfilled' });
+    }
+  }
+  catch (err) {
+    console.error(err)
+  }
+})
+
+app.post('/admin/approve', async (req, res) => {
+  
+  const {_id}=req.body
+  try {
+    await ems(_id)
+    res.status(200).json({ message: 'EMS DONE!' });
+  }
+  catch (err) {
+    console.error(err)
+  }
+})
+
+app.post('/admin/deny', async (req, res) => {
+  const {_id}= req.body;
+  
+  try {
+    await Request.updateOne({ _id }, { $set: { state: 'denied' } });
+    res.status(200).json({ message: 'Data denied successfully' });
+  } catch (error) {
+    console.error(error)
+  }
+})
 app.listen(3001, (req, res) => {
   console.log("app is listening on port 3001");
 });

@@ -16,7 +16,7 @@ const Login = () => {
   const rolesArray = ["admin", "teacher"]
   const route = useLocation()
   useEffect(() => {
-    console.log("I am here->  ")
+    console.log("I am here->")
     //checkAuth(rolesArray,route,navigate);
   }, []);
   const handleLogin = async (e) => {    
@@ -24,11 +24,6 @@ const Login = () => {
       email:email,
       password:password,
       role:e.target.name,
-      name:"",
-      free:0,
-      subject:["CN","AI"],
-      dep:"",
-      _id:""
     }
     console.log(formData,e.target.name)
     e.preventDefault();
@@ -50,8 +45,12 @@ const Login = () => {
         console.log(profile)
         setErrorMessage('');
          setLoginSuccess(true);
-        console.log('Login successful!');
-        navigate("/teacher-dashboard")
+        console.log('Login successful!',profile);
+        if(profile.role==="teacher"){
+        navigate("/teacher-dashboard")}
+        else{
+          navigate("/admin-dashboard")
+        }
 
       }
     } catch (error) {
