@@ -4,9 +4,9 @@ import mongoose from 'mongoose';
 import axios from 'axios';
 import nodemailer from 'nodemailer';
 import { config as dotenvConfig } from 'dotenv';
-import connectDB from '../model/db.js';
+import { connectDB } from '../model/db.js';
 dotenvConfig(); // Execute the config method
-import { Hall, Teacher } from '../model/db.js';
+import { Hall } from '../model/db.js';
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
@@ -159,13 +159,25 @@ async function writeToSheet(newData, subName) {
 }
 
 // ONCE THE WRITE SHEET IS DONE, IT WILL PUSH IT TO GITHUB AND MAIL TO STUDENTS
-async function sendMail(recipients, text, subject) {
+async function sendMail(recipients, file, text,name,subject) {
     for (const recipient of recipients) {
+        const wb = xlsx.utils.book_new();
+        const ws = xlsx.utils.json_to_sheet(file);
+        xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+        const xlsxBuffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
+
         const mailOptions = {
             from: 'lnmiitems123@gmail.com',
-            to: recipient,
+            to: recipient.EMAIL,
             subject: subject,
             text: text,
+            attachments: [
+                {
+                    filename: 'your-file-name.xlsx', // Change this to the desired file name
+                    content: xlsxBuffer.toString('base64'),
+                    encoding: 'base64'
+                }
+            ]
         };
 
         try {
@@ -177,7 +189,7 @@ async function sendMail(recipients, text, subject) {
     }
 }
 
-
+export {sendMail}
 
 let subName = 'CN'; // will come from frontend
 let inputStudentList = 'lt.xlsx'; // will come from frontend

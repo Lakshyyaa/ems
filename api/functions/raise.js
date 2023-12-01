@@ -24,9 +24,9 @@
 
 import mongoose from 'mongoose';
 import xlsx from 'xlsx';
-import {connectDB, Hall, Request} from '../model/db.js';
-const maxhalls = 17 // shweta maam told us that we can have halls uniform and equal, 
-// though seatgen function works regardless, just counting seats will take time
+import { connectDB, Hall, Request } from '../model/db.js';
+import userSchema from '../model/userSchema.js';
+
 
 // const Hall = mongoose.model('Hall', {
 //     hall: Number,
@@ -152,45 +152,65 @@ async function removeFromRequests(subName) {
 }
 
 // first check if any subject has happened and needs to be removed by looking at current time
-async function checkSlot(subName, start, end, reqHalls) {
+async function checkSlot(start, end, halls, requests, id) {
     let approve = 1;
-    await connectDB()
-    let halls = reqHalls;
+    const maxhalls = 17 // shweta maam told us that we can have halls uniform and equal, 
+    // though seatgen function works regardless, just counting seats will take time
     try {
-        const requests = await Request.find({})
         requests.forEach(r => {
-            halls += r.halls
-            if (r.subject == subName) {
-                approve = 0
-            }
-            else if ((r.start > start && r.start < end) || (r.end > start && r.end < end)) {
-                approve = 0
-            }
-            else if (halls + 5 > maxhalls) {
-                approve = 0
+            // add to check same req not being compared
+            if (r._id != id) {
+                if (r.state == 'approved') {
+                    halls += r.halls
+                    if (halls > maxhalls) {
+                        approve = 0
+                    }
+                }
+                if (r.state == 'approved' && (r.start > start && r.start < end) || (r.end > start && r.end < end)) {
+                    approve = 0
+                }
             }
         })
     } catch (error) {
         console.error('Error checking slot:', error);
     }
     // check the sub in scheduled, if time clashes and lt not available cancel
-    try {
-        const existingSchedule = await Schedule.find({ subject: subName });
-        if (existingSchedule.length > 0) {
-            existingSchedule.forEach(s => {
-                halls += s.halls
-                if (halls + 5 > maxhalls) {  // Always keeping a buffer of 5 halls.
-                    approve = 0  // as enough halls not left
-                }
-                else if ((s.start > start && s.start < end) || (s.end > start && s.end < end)) {
-                    approve = 0; // as it overlapped with an existing schedule
-                }
-            })
-        }
-    } catch (error) {
-        console.error('Error checking slot:', error);
-    }
+    // try {
+    //     const existingSchedule = await Schedule.find({ subject: subName });
+    //     if (existingSchedule.length > 0) {
+    //         existingSchedule.forEach(s => {
+    //             halls += s.halls
+    //             if (halls + 5 > maxhalls) {  // Always keeping a buffer of 5 halls.
+    //                 approve = 0  // as enough halls not left
+    //             }
+    //             else if ((s.start > start && s.start < end) || (s.end > start && s.end < end)) {
+    //                 approve = 0; // as it overlapped with an existing schedule
+    //             }
+    //         })
+    //     }
+    // } catch (error) {
+    //     console.error('Error checking slot:', error);
+    // }
     return approve; // all checks passed
+}
+
+async function checkTeachers(subject, studentsnum) {
+    let approve = 1
+    try {
+        const teachers = await userSchema.find({})
+        teachers.forEach(t => {
+            if (t.dep != subject && t.free) {
+                studentsnum -= 20
+            }
+        })
+        if (studentsnum > 0) {
+            approve = 0
+        }
+        return approve
+    }
+    catch (err) {
+        console.log(err)
+    }
 }
 
 function hallNeeded(fileName) {
@@ -214,7 +234,7 @@ async function main() {
     // await addToRequests('CN', a, c, 'as', 'cancel', 'staff.xlsx')
 }
 main().catch(err => console.log(err))
-
+export { checkSlot, checkTeachers }
 // USER SENDS REQ,
 // 1. CHECK IF REQ SECTION FULL HAS ONE, IF IT HAS, DENY
 // 2. CHECK IF THE REQ HAS ENOUGH TIME OR SLOT, IF NOT, FOFF THEN
@@ -229,12 +249,12 @@ main().catch(err => console.log(err))
 
 // 1. M A I N  :  KEEP CHECKING FOR WHEN AN EXAM ENDED, REMOVE IT FROM THE SCHEDULED, FETCH AND DELETE FROM GITHUB
 // THEN READ IT AND FREE ALL THOSE HALLS AND TEACHERS
-// FOR THIS TO WORK, AFTER COMPLETING SEATGEN PUSH THIS TO GITHUB TOO.  
+// FOR THIS TO WORK, AFTER COMPLETING SEATGEN PUSH THIS TO GITHUB TOO.
 // 2. WE HAVE INFINITE TEACHERS.
 
 
 // EDIT: WHEN USER RAISES: CHECK IF ANOTHER REQ EXIST OR SCHEDULE HAS CLASHES, IF YES OF EITHER CANT RAISE.
 // APPROVE, DENY BY AMDIN LATER BY CHECKING HALLS, LT, TIME or let the admin do it???/
 // MAKE CAPACITY TO ACTUAL NOT 100
-// WHEN REQ APP/DENY PUT IN ANOTHER DB THAT IS FETCHED IN FRONTEND TO SHOW AND MARK AS READ BUTTON TO EMPTY THE DB 
+// WHEN REQ APP/DENY PUT IN ANOTHER DB THAT IS FETCHED IN FRONTEND TO SHOW AND MARK AS READ BUTTON TO EMPTY THE DB
 // THIS DB WILL ALSO NEED THE ID(NAME) OF THE TEACHER TO SHOW HIM THAT AND SO WOULD THE REQ DB NEED ONE

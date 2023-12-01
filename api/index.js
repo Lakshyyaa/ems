@@ -5,14 +5,17 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import bcrypt from "bcryptjs";
+import { checks, ems } from "./functions/admindash.js";
 import { Authenticate } from "./middleware/authenticate.js";
 import cookieParser from "cookie-parser";
 import { addToRequests } from "./functions/raise.js";
-import { Request } from "./model/db.js";
+import { Hall, Request, connectDB } from "./model/db.js";
 import exceljs from "exceljs"
 import { uploadSheet } from "./functions/helper.js";
 import xlsx from 'xlsx';
 import multer from "multer";
+import userSchema from "./model/userSchema.js";
+
 const app = express();
 dotenv.config();
 app.use(
@@ -26,14 +29,15 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-const Connection = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URL);
-    console.log("Database Connected Successfully");
-  } catch (error) {
-    console.log("There is some error while connecting the database", error);
-  }
-};
+await connectDB()
+// const Connection = async () => {
+//   try {
+//     await mongoose.connect(process.env.MONGO_URL);
+//     console.log("Database Connected Successfully");
+//   } catch (error) {
+//     console.log("There is some error while connecting the database", error);
+//   }
+// };
 
 app.post("/login", async (req, res) => {
 
@@ -126,13 +130,22 @@ app.post("/tickets", upload.single('file'), async (req, res) => {
     catch (err) {
       console.error(err)
     }
+
+    const fileBuffer = await file.buffer;
+    const workbook = await xlsx.read(fileBuffer, { type: 'buffer' });
+    const sheetName = await workbook.SheetNames[0];
+    const worksheet = await workbook.Sheets[sheetName];
+    const newfile = await xlsx.utils.sheet_to_json(worksheet);
+    const hallsize = 40
+    // here we also add the number of halls the exam will requre in the reqeust db to be later used
     const newRequest = await new Request({
       subject: subject,
       start: startTime,
       end: endTime,
       link: (_id) + subject + '.xlsx',
       type: request_type, // Adjust the type accordingly
-      state: 'pending'
+      state: 'pending',
+      halls: Math.ceil(newfile.length / hallsize)
     });
     // const fileBuffer = await file.buffer;
     // const workbook = await xlsx.read(fileBuffer, { type: 'buffer' });
@@ -141,7 +154,7 @@ app.post("/tickets", upload.single('file'), async (req, res) => {
     // const newfile = await xlsx.utils.sheet_to_json(worksheet);
     await newRequest.save()
       .then(savedRequest => {
-        console.log('Request saved successfully:', savedRequest);
+        console.log('Request saved successfully:', savedRequest._id);
       })
       .catch(error => {
         console.error('Error saving request:', error);
@@ -152,10 +165,46 @@ app.post("/tickets", upload.single('file'), async (req, res) => {
   }
 });
 app.listen(3001, (req, res) => {
-  console.log("app is listening on port 8000");
+  console.log("app is listening on port 3001");
 });
 
-Connection();
+async function deleteExpiredObjects() {
+  console.log('called')
+  try {
+    const currentDate = new Date();
+    const requests = await Request.find({})
+    const halls = await Hall.find({})
+    for (let req of requests) {
+      if (req.end >= currentDate) {
+        let hallstofree = [];
+        let numofhalls = req.halls;
+        let i = 0;
+        while (i < halls.length && numofhalls > 0) {
+          if (halls[i].free == 0) {
+            halls[i].free = 1;
+            numofhalls--
+            hallstofree.push(halls[i]._id);
+          }
+          i++;
+        }
+        await Hall.updateMany({ _id: { $in: hallstofree } }, { $set: { free: 1 } });
+        await userSchema.updateMany({ _id: { $in: req.teachers } }, { $set: { free: 1 } });
+      }
+    }
+  } catch (error) {
+    console.error('Error deleting expired objects:', error);
+  }
+}
+// Run the deletion logic at regular intervals
+setInterval(deleteExpiredObjects, 30 * 60 * 1000);
+
+// adding new function to check the req conditions
+// new ObjectId('6568f32f424b4e234562f221')
+// const conditionsmet = await checks('6569ded0571625eadb88bc16')
+// return the value
+// ASSUMING MET, WE NOW DO SEAT AND INIV GEN
+// const seatingexcel = await ems('6568f32f424b4e234562f221')
+
 
 // add path to get all tickets by teacher name
 // teacher sends a teacher id with each req, which is the mongodb id of the teacher object from the userSchema

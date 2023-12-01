@@ -58,7 +58,7 @@ async function deleteSheet(sheetName) {
 
 
 async function fetchSheet(link) {
-    const url = `https://api.github.com/repos/AyushMathpal/emscdn/contents/files/${link}`;
+    const url = `https://api.github.com/repos/Lakshyyaa/emscdn/contents/files/${link}`;
     try {
         const response = await axios.get(url);
         const base64Content = response.data.content;
@@ -66,7 +66,6 @@ async function fetchSheet(link) {
         const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
         const sheetName = workbook.SheetNames[0];
         const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-        console.log(sheetData)
         return sheetData
     } catch (error) {
         console.error('Error fetching sheet:', error.message);
