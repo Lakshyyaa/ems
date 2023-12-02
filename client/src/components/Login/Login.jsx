@@ -62,7 +62,7 @@ const Login = () => {
 
   return (<>{loading?<LinearProgress style={{backgroundColor:"black"}}/>:null}
     <div className="container">
-      <div className="card">
+      <div className="glass">
         <h2>Login</h2>
         {errorMessage && <p className="errorMessage">{errorMessage}</p>}
         <form>

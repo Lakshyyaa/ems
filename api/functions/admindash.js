@@ -21,6 +21,7 @@ async function checks(id) {
             console.log('sab checked')
         }
         else {
+            approved = 0
             // send conditions not met in a return
             console.log('rehgya')
         }
@@ -28,7 +29,9 @@ async function checks(id) {
     else {
         // send conditions not met in a return
         console.log('rehgya')
+        approved = 0
     }
+    return approved
 }
 async function ems(id) {
     const req = await Request.findOne({ _id: id })
@@ -105,7 +108,7 @@ async function ems(id) {
 
 
     // 3. sending mail
-    await sendMail([lol], newData, 'please find attached the arrangement of your exams', 'exam arrangement', 'Exam Schedule')
+    // await sendMail([lol], newData, 'please find attached the arrangement of your exams', 'exam arrangement', 'Exam Schedule')
 
 
     // 4. saving the update request state

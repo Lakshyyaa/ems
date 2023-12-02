@@ -18,9 +18,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    border:1.5px solid black;
-   
-   
+    border:1.5px solid black; 
 }
 
 h2 {
@@ -40,9 +38,10 @@ h2 {
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
-    border: 1px solid #ccc;
+    border: 1px solid black;
     font-size:17px;
-    border-radius: 4px;
+    border-radius: 0.7rem;
+
 }
 
 .buttonGroup {
@@ -73,4 +72,59 @@ h2 {
 .errorMessage {
     color: #d9534f;
     text-align: center;
+}
+body {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 10s ease infinite;
+    height: 100vh;
+}
+
+.glass {
+    padding: 3rem;
+    width: 23rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+body {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 10s ease infinite;
+    height: 100vh;
+}
+
+.p-button.p-component {
+    padding: 1rem;
+}
+
+.p-button.p-component:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid var(--primary-color);
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+body {
+    --sb-track-color: #232e33;
+    --sb-thumb-color: #2c96bd;
+    --sb-size: 7px;
+
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
 }

@@ -21,7 +21,7 @@ export default function Admin() {
   const { profile } = useProfile();
   const [tickets, setTickets] = useState([]);
   const route = useLocation().pathname;
-  const [checker,setChecker]=useState(3);
+  const [checker, setChecker] = useState(3);
 
   useEffect(() => {
     checkAuth(rolesArray, route, navigate);
@@ -40,47 +40,49 @@ export default function Admin() {
     };
     fetchTicket();
   }, []);
-  const checkForAvailability=async(index,ticket)=>{
+  const checkForAvailability = async (index, ticket) => {
     try {
-      const res=await axios.post("http://localhost:3001/admin/check",ticket);
-    if(res.status===200){
-      setChecker(1);
-    }
-    else{setChecker(2)};
+      const res = await axios.post("http://localhost:3001/admin/check", ticket);
+      if (res.status === 200) {
+        setChecker(1);
+      }
+      else { setChecker(2) };
     } catch (error) {
       console.log(error)
     }
   }
-  const denyRequest=async(ticket)=>{
+  const denyRequest = async (ticket) => {
     try {
-      const res=await axios.post("http://localhost:3001/admin/deny",ticket)
-      if(res.status===200){
+      const res = await axios.post("http://localhost:3001/admin/deny", ticket)
+      if (res.status === 200) {
         console.log("Request Approved")
+        window.location.reload()
       }
     } catch (error) {
       console.log(error)
     }
   }
-  const approveRequest=async(ticket)=>{
+  const approveRequest = async (ticket) => {
     try {
-      const res=await axios.post("http://localhost:3001/admin/approve",ticket)
-      if(res.status===200){
+      const res = await axios.post("http://localhost:3001/admin/approve", ticket)
+      if (res.status === 200) {
         console.log("Request Approved")
+        window.location.reload()
 
       }
     } catch (error) {
       console.log(error)
     }
   }
-    
-  
-  const handleTicketClick = (index,ticket) => {
+
+
+  const handleTicketClick = (index, ticket) => {
     setExpandedTickets((prevExpandedTickets) => {
       const newExpandedTickets = [...prevExpandedTickets];
       newExpandedTickets[index] = !newExpandedTickets[index];
       return newExpandedTickets;
     });
-    checkForAvailability(index,ticket);
+    checkForAvailability(index, ticket);
   };
   const openModal = () => {
     setIsModalOpen(true);
@@ -101,33 +103,33 @@ export default function Admin() {
                 <div
                   key={index}
                   className={styles.ticketListItem}
-                  onClick={() => handleTicketClick(index,ticket)}
+                  onClick={() => handleTicketClick(index, ticket)}
                 >
                   <div>{`Status: ${ticket.state}`}</div>
                   {expandedTickets[index] && (
                     <>
-                      <div className={`${styles.pending} ${checker===1?styles.accept:checker===2?styles.reject:styles.loading}`}>{checker===1?"Free":checker===2?"Busy":"Loading"}</div>
-                      <div>{`Date: ${ticket.date}`}</div>
-                      <div>{`Start-Time: ${ticket.start}`}</div>
-                      <div>{`End-Time: ${ticket.end}`}</div>
+                      <div className={`${styles.pending} ${checker === 1 ? styles.accept : checker === 2 ? styles.reject : styles.loading}`}>{checker === 1 ? "Free" : checker === 2 ? "Busy" : "Loading"}</div>
+                      <div>{`Date: ${ticket.end.toLocaleDateString()}`}</div>
+                      <div>{`Start-Time: ${ticket.start.toLocaleTimeString()}`}</div>
+                      <div>{`End-Time: ${ticket.end.toLocaleTimeString()}`}</div>
                       <div>{`Subject: ${ticket.subject}`}</div>
-                      <div style={{display:"flex"}} className={`${ticket.state==="pending"?'':styles.remove}`}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{ width: "fit-content", marginRight: "1rem" }}
-                        onClick={denyRequest(ticket)}
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{ width: "fit-content" }}
-                        onClick={approveRequest(ticket)}
-                      >
-                        Deny
-                      </Button>
+                      <div style={{ display: "flex" }} className={`${ticket.state === "pending" ? '' : styles.remove}`}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          sx={{ width: "fit-content", marginRight: "1rem" }}
+                          onClick={denyRequest(ticket)}
+                        >
+                          Approve
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          sx={{ width: "fit-content" }}
+                          onClick={approveRequest(ticket)}
+                        >
+                          Deny
+                        </Button>
                       </div>
                     </>
                   )}
