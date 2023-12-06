@@ -65,6 +65,7 @@ const handleSubmit=async(e)=>{
             onChange={(e) =>
               setTeacherData({ ...teacherData, email: e.target.value })
             }
+            
           />
         </div>
         <div className={styles.input_field}>

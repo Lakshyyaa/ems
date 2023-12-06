@@ -9,16 +9,17 @@ const Login = () => {
   const navigate=useNavigate();
   const {profile,updateProfile}=useProfile()
   const [email, setEmail] = useState('');
+  
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
    const [loginSuccess, setLoginSuccess] = useState(false);
   const[loading,setLoading]=useState(false)
   const rolesArray = ["admin", "teacher"]
   const route = useLocation()
-  useEffect(() => {
-    console.log("I am here->")
-    //checkAuth(rolesArray,route,navigate);
-  }, []);
+  // useEffect(() => {
+  //   console.log("I am here->")
+  //   //checkAuth(rolesArray,route,navigate);
+  // }, []);
   const handleLogin = async (e) => {    
     const formData={
       email:email,
@@ -46,7 +47,7 @@ const Login = () => {
         setErrorMessage('');
          setLoginSuccess(true);
         console.log('Login successful!',profile);
-        if(profile.role==="teacher"){
+        if(e.target.name==="teacher"){
         navigate("/teacher-dashboard")}
         else{
           navigate("/admin-dashboard")
@@ -92,11 +93,7 @@ const Login = () => {
             <button type="button" onClick={handleLogin} className="loginButton teacher" name='teacher'>
               Login as Teacher
             </button>
-            {loginSuccess && (
-            <Link to="/dashboard" className="dashboardLink">
-              Go to Dashboard
-            </Link>
-          )}
+            
             <button type="button" onClick={handleLogin} className="loginButton admin" name='admin'>
               Login as Admin
             </button>
