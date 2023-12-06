@@ -20,6 +20,7 @@ import userSchema from "./userSchema.js";
 const connectDB = async () => {
     // await mongoose.connect('mongodb+srv://21ucs047:ayush123@cluster0.sjurkor.mongodb.net/Exam-Database?retryWrites=true&w=majority');
     await mongoose.connect(process.env.MONGO_URL);
+    console.log('connected db')
     // await mongoose.connect('mongodb://127.0.0.1:27017/teacherDB');
     // console.log('Connected to MongoDB');
     // for (let i = 0; i < 20; i++) {

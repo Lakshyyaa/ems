@@ -4,7 +4,7 @@ import axios from "axios";
 import { useProfile } from "../../Context/Context";
 
 const TicketForm = ({ tickets, setTickets }) => {
-  const{profile}=useProfile()
+  const { profile } = useProfile()
   const [newTicketData, setNewTicketData] = useState({
     date: "",
     start_time: "",
@@ -24,7 +24,7 @@ const TicketForm = ({ tickets, setTickets }) => {
       newTicketData.end_time !== "" &&
       newTicketData.file !== null &&
       newTicketData.subject !== "" &&
-      newTicketData.request_type!==""
+      newTicketData.request_type !== ""
     ) {
       console.log("data->", newTicketData);
       try {
@@ -90,7 +90,7 @@ const TicketForm = ({ tickets, setTickets }) => {
             <option value="cancel" >
               Cancel
             </option>
-            
+
           </select>
         </div>
         <div className={styles.form_inputs}>

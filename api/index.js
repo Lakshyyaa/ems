@@ -278,14 +278,7 @@ async function deleteExpiredObjects() {
 // Run the deletion logic at regular intervals
 setInterval(deleteExpiredObjects, 30 * 60 * 1000);
 
-// adding new function to check the req conditions
-// new ObjectId('6568f32f424b4e234562f221')
 // const conditionsmet = await checks('6569ded0571625eadb88bc16')
 // return the value
 // ASSUMING MET, WE NOW DO SEAT AND INIV GEN
 // const seatingexcel = await ems('6568f32f424b4e234562f221')
-
-
-// add path to get all tickets by teacher name
-// teacher sends a teacher id with each req, which is the mongodb id of the teacher object from the userSchema
-// frontend checks no teacher can do same subject request again using teahcer(mongo id) and subname

@@ -1,5 +1,3 @@
-// THE BELOW CODE IS FOR THE 3 FUNCTIONS: UPLOAD, FETCH AND DELETE XLSX TO GITHUB
-
 import dotenv from "dotenv";
 dotenv.config();
 import { Octokit } from '@octokit/rest';

@@ -3,10 +3,21 @@ import { useDropzone } from 'react-dropzone';
 import * as XLSX from 'xlsx';
 import { Bar } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
+import './ExcelUploader.css';
 
 const ExcelUploader = () => {
   const [data, setData] = useState(null);
+  const [mean, setMean] = useState(null);
+  const [median, setMedian] = useState(null);
+  const [mode, setMode] = useState(null);
   const chartRef = useRef(null);
+
+
+  const [showStatistics, setShowStatistics] = useState(false);
+
+  const toggleStatistics = () => {
+    setShowStatistics(!showStatistics);
+  };
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -35,8 +46,9 @@ const ExcelUploader = () => {
           chartRef.current.destroy();
         }
 
-        // Render the chart
+        // Render the chart and calculate mean, median, and mode
         renderChart();
+        calculateStatistics(jsonData);
       };
 
       reader.readAsArrayBuffer(file);
@@ -44,6 +56,32 @@ const ExcelUploader = () => {
       console.error('Invalid file type. Please upload an Excel file.');
     }
   }, []);
+
+  const calculateStatistics = (jsonData) => {
+    const marks = jsonData.map((entry) => entry.MARKS);
+
+    // Calculate mean
+    const meanValue = marks.reduce((acc, val) => acc + val, 0) / marks.length;
+    setMean(meanValue.toFixed(2));
+
+    // Calculate median
+    const sortedMarks = marks.slice().sort((a, b) => a - b);
+    const middle = Math.floor(sortedMarks.length / 2);
+    const medianValue =
+      sortedMarks.length % 2 === 0
+        ? (sortedMarks[middle - 1] + sortedMarks[middle]) / 2
+        : sortedMarks[middle];
+    setMedian(medianValue);
+
+    // Calculate mode
+    const modeObj = {};
+    marks.forEach((mark) => {
+      modeObj[mark] = (modeObj[mark] || 0) + 1;
+    });
+    const modeValues = Object.entries(modeObj).filter(([_, count]) => count === Math.max(...Object.values(modeObj)));
+    const modeResult = modeValues.map(([value]) => Number(value));
+    setMode(modeResult.join(', '));
+  };
 
   const renderChart = () => {
     const ctx = document.getElementById('bar-chart');
@@ -78,7 +116,7 @@ const ExcelUploader = () => {
   };
 
   const prepareChartData = () => {
-    if (!data) {
+    if (!data || data.length === 0) {
       return {
         labels: [],
         datasets: [
@@ -95,7 +133,7 @@ const ExcelUploader = () => {
       };
     }
 
-    const marks = data.map((entry) => entry.Marks);
+    const marks = data.map((entry) => entry.MARKS);
 
     // Count the number of students in each range of 10
     const counts = Array.from({ length: 10 }, () => 0);
@@ -106,78 +144,98 @@ const ExcelUploader = () => {
     });
 
     // Create labels for each range
-    const labels = counts.map((_, index) => `${index * 10}-${(index + 1) * 10 - 1}`);
+    const labels = counts.map((_, index) => `${ index * 10} - ${(index + 1) * 10 - 1}`);
 
-    return {
-      labels,
-      datasets: [
-        {
-          label: 'Number of Students',
-          backgroundColor: 'rgba(75,192,192,0.4)',
-          borderColor: 'rgba(75,192,192,1)',
-          borderWidth: 1,
-          hoverBackgroundColor: 'rgba(75,192,192,0.6)',
-          hoverBorderColor: 'rgba(75,192,192,1)',
-          data: counts,
-        },
-      ],
-    };
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Number of Students',
+        backgroundColor: 'rgba(75,192,192,0.4)',
+        borderColor: 'rgba(75,192,192,1)',
+        borderWidth: 1,
+        hoverBackgroundColor: 'rgba(75,192,192,0.6)',
+        hoverBorderColor: 'rgba(75,192,192,1)',
+        data: counts,
+      },
+    ],
   };
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: '.xlsx',
-  });
-
-  return (
-    <div>
-      <div {...getRootProps()} style={dropzoneStyle}>
-
-        <input {...getInputProps()} />
-      
-        <p>Drag 'n' drop an Excel file here, or click to select one</p>
-      </div>
-
-      {data && (
-        <div>
-          <h2>Graphical Analysis</h2>
-          <Bar
-            data={prepareChartData()}
-            options={{
-              scales: {
-                x: {
-                  title: {
-                    display: true,
-                    text: 'Marks Range',
-                  },
-                },
-                y: {
-                  title: {
-                    display: true,
-                    text: 'Number of Students',
-                  },
-                  beginAtZero: true,
-                  stepSize: 10, // Set the interval between ticks
-                  max: 50, // Set the maximum value for the y-axis
-                },
-              },
-            }}
-          />
-        </div>
-      )}
-    </div>
-  );
 };
 
+const { getRootProps, getInputProps } = useDropzone({
+  onDrop,
+  accept: '.xlsx',
+});
+
+return (
+  <div className="excel-uploader-container">
+    {!data ? (
+      <div {...getRootProps()} className="dropzone">
+        <input {...getInputProps()} />
+        <p>Drag 'n' drop an Excel file here, or click to select one</p>
+      </div>
+    ) : null}
+
+    {data && (
+      <>
+        <button onClick={toggleStatistics} className="togglebutton">
+          {showStatistics ? 'Hide Statistics' : 'Show Statistics'}
+        </button>
+
+        {showStatistics && mean && median && mode && (
+          <div className="statistics-container">
+            <h2>Statistics</h2>
+            <div className="statistics-item">Mean: {mean}</div>
+            <div className="statistics-item">Median: {median}</div>
+            <div className="statistics-item">Mode: {mode}</div>
+          </div>
+        )}
+      </>
+    )}
+
+    {data && (
+      <div className="chart-container">
+        <h2>Graphical Analysis</h2>
+        <Bar
+          data={prepareChartData()}
+          options={{
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Marks Range',
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Number of Students',
+                },
+                beginAtZero: true,
+                stepSize: 10, // Set the interval between ticks
+                max: 400, // Set the maximum value for the y-axis
+              },
+            },
+          }}
+        />
+      </div>
+    )}
+  </div>
+);
+};
 const dropzoneStyle = {
   border: '2px dashed #cccccc',
   borderRadius: '4px',
   padding: '20px',
   textAlign: 'center',
   cursor: 'pointer',
-  display:'flex',
-  justifyContent:'center',
-  alignItems:'center'
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center'
+};
+
+const statisticsStyle = {
+  marginTop: '20px',
 };
 
 export default ExcelUploader;

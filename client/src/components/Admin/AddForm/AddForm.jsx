@@ -11,36 +11,36 @@ const AddForm = () => {
     name: "",
     email: "",
     password: "",
-    subjects:inputArray,
+    subjects: inputArray,
     free: Number(1),
     dep: "",
-    role:"teacher",
-    
+    role: "teacher",
+
   });
- 
+
 
   const handleAddInput = () => {
-    
+
     teacherData.subjects.push(subject)
     setSubject(''); // Clear input field after adding to the array
   };
-const handleSubmit=async(e)=>{
-  console.log(teacherData)
-  try {
+  const handleSubmit = async (e) => {
+    console.log(teacherData)
+    try {
 
-    const res=await axios.post("http://localhost:3001/teacher",teacherData);
-    if (res.status === 200) {
-      console.log("Ticket Submitted",res);
+      const res = await axios.post("http://localhost:3001/teacher", teacherData);
+      if (res.status === 200) {
+        console.log("Ticket Submitted", res);
+        alert("teacher added successfully")
+      }
+      if (res.status === 201) {
+        alert("Email Already Exists");
+        console.log(res.status)
+      }
+    } catch (error) {
+      console.log("error is here", error)
     }
-    if(res.status===201){
-      alert("Email Already Exists");
-      console.log(res.status)
-    }
-  } catch (error) {
-    console.log("error is here", error)
-   
   }
-}
   return (
     <div className={styles.add_form}>
       <h3>AddTeacher</h3>
@@ -65,7 +65,7 @@ const handleSubmit=async(e)=>{
             onChange={(e) =>
               setTeacherData({ ...teacherData, email: e.target.value })
             }
-            
+
           />
         </div>
         <div className={styles.input_field}>
@@ -92,21 +92,21 @@ const handleSubmit=async(e)=>{
         </div>
         <div className={styles.input_field} >
           <div className={styles.label}>Subject:</div>
-          <div style={{display:"flex",flexDirection:"row"}}>
-          <Input
-            size="md"
-            placeholder="Enter Subjects"
-            value={subject}
-            onChange={(e) =>
-              setSubject(e.target.value)
-            }
-          />
-      <Button variant="contained" color="primary" onClick={handleAddInput} sx={{width:"fit-content"}}>
-        Add
-      </Button></div>
-     {/* <FormHelperText>This is a helper text.</FormHelperText> */}
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <Input
+              size="md"
+              placeholder="Enter Subjects"
+              value={subject}
+              onChange={(e) =>
+                setSubject(e.target.value)
+              }
+            />
+            <Button variant="contained" color="primary" onClick={handleAddInput} sx={{ width: "fit-content" }}>
+              Add
+            </Button></div>
+          {/* <FormHelperText>This is a helper text.</FormHelperText> */}
         </div>
-        <Button type="submit" variant="contained" onSubmit={handleSubmit} sx={{width:"fit-content",alignSelf:"center"}}>Submit</Button>
+        <Button type="submit" variant="contained" onClick={handleSubmit} sx={{ width: "fit-content", alignSelf: "center" }}>Submit</Button>
       </form>
     </div>
   );

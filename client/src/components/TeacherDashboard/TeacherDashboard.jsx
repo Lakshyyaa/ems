@@ -66,12 +66,11 @@ const TeacherDashboard = () => {
             <div className={styles.ticketList}>
               {tickets?.map((ticket, index) => (
                 <div key={index} className={styles.ticketListItem}>
-                  
-                  <div> {`Status: ${ticket.state}`}</div>
-                  <div> {`Date: ${ticket.date}`}</div>
-                  <div> {`Start-Time: ${ticket.start}`}</div>
-                  <div> {`End-Time: ${ticket.end}`}</div>
-                  <div> {`Subject: ${ticket.subject}`}</div>
+                  <div> {`Status: ${ticket.state || 'N/A'}`}</div>
+                  {ticket.start && <div> {`Start-Time: ${new Date(ticket.start).toLocaleTimeString()}`}</div>}
+                  {ticket.end && <div> {`End-Time: ${new Date(ticket.end).toLocaleTimeString()}`}</div>}
+                  {ticket.end && <div> {`Date: ${new Date(ticket.end).toLocaleDateString()}`}</div>}
+                  <div> {`Subject: ${ticket.subject || 'N/A'}`}</div>
                 </div>
               ))}
             </div>

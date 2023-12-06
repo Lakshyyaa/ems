@@ -109,16 +109,16 @@ export default function Admin() {
                   {expandedTickets[index] && (
                     <>
                       <div className={`${styles.pending} ${checker === 1 ? styles.accept : checker === 2 ? styles.reject : styles.loading}`}>{checker === 1 ? "Free" : checker === 2 ? "Busy" : "Loading"}</div>
-                      <div>{`Date: ${ticket.end.toLocaleDateString()}`}</div>
-                      <div>{`Start-Time: ${ticket.start.toLocaleTimeString()}`}</div>
-                      <div>{`End-Time: ${ticket.end.toLocaleTimeString()}`}</div>
+                      {ticket.start && <div> {`Start-Time: ${new Date(ticket.start).toLocaleTimeString()}`}</div>}
+                      {ticket.end && <div> {`End-Time: ${new Date(ticket.end).toLocaleTimeString()}`}</div>}
+                      {ticket.end && <div> {`Date: ${new Date(ticket.end).toLocaleDateString()}`}</div>}
                       <div>{`Subject: ${ticket.subject}`}</div>
                       <div style={{ display: "flex" }} className={`${ticket.state === "pending" ? '' : styles.remove}`}>
                         <Button
                           variant="contained"
                           color="primary"
                           sx={{ width: "fit-content", marginRight: "1rem" }}
-                          onClick={denyRequest(ticket)}
+                          onClick={()=>denyRequest(ticket)}
                         >
                           Approve
                         </Button>
@@ -126,7 +126,7 @@ export default function Admin() {
                           variant="contained"
                           color="primary"
                           sx={{ width: "fit-content" }}
-                          onClick={approveRequest(ticket)}
+                          onClick={()=>approveRequest(ticket)}
                         >
                           Deny
                         </Button>
@@ -157,9 +157,9 @@ export default function Admin() {
             <AddForm />
             {/* Add form fields for new ticket data */}
           </Modal>
-          <button className={styles.deleteButton} value="delete">
+          {/* <button className={styles.deleteButton} value="delete">
             Delete Teacher
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

@@ -17,11 +17,6 @@ const transporter = nodemailer.createTransport({
         pass: process.env.PW,
     },
 });
-// Rest of your code...
-
-// ADD A FEATURE TO ALTER SEATS? NOT IMPORTANT THOUGH
-
-// AFTER SEATGEN INITIATED BY THE ADMIN, IT MAY RETURN DENY AS IT COULD
 
 async function fetchSheet(filePath) {
     const url = `https://api.github.com/repos/Lakshyyaa/emscdn/contents/files/${filePath}`;
@@ -71,7 +66,6 @@ async function invigilationGen(newData, subName) {
     }
     writeToSheet(newData, subName);
     return 1;
-    // return the right thing, to let the user know what error/right thing has happened
 }
 
 async function seatGen(subName, inputStudentList) {
@@ -89,10 +83,6 @@ async function seatGen(subName, inputStudentList) {
     let studentList = await fetchSheet(inputStudentList);
     let numberOfStudents = studentList.length;
     let ltSheet = await Hall.find({})
-    //  U S E   A   H A L L S   D A T A B A S E : FREE, NAME, CAPACITY  
-    // HERE WE SEE IF ENOUGH SEATS AVAILABLE TO SEND A BIG FOFF
-    // BUT REMEMBER TO ADD AN AVAILABLE COLUMN TO IT AS WELL 0/1
-    // THAT WILL BE CHANGED JUST LIKE THE TEACHERDB IN THE END OF THIS FUNCTION.
     let newData = [];
     let notFree = []
     var studentIndex = 0;
@@ -159,26 +149,27 @@ async function writeToSheet(newData, subName) {
 }
 
 // ONCE THE WRITE SHEET IS DONE, IT WILL PUSH IT TO GITHUB AND MAIL TO STUDENTS
-async function sendMail(recipients, file, text,name,subject) {
+async function sendMail(recipients, file, text, name, subject) {
     for (const recipient of recipients) {
-        const wb = xlsx.utils.book_new();
-        const ws = xlsx.utils.json_to_sheet(file);
-        xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-        const xlsxBuffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
-
         const mailOptions = {
             from: 'lnmiitems123@gmail.com',
             to: recipient.EMAIL,
             subject: subject,
             text: text,
-            attachments: [
+        };
+        if (file) {
+            const wb = xlsx.utils.book_new();
+            const ws = xlsx.utils.json_to_sheet(file);
+            xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+            const xlsxBuffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
+            mailOptions.attachments = [
                 {
-                    filename: 'your-file-name.xlsx', // Change this to the desired file name
+                    filename: name + '.xlsx', // Change this to the desired file name
                     content: xlsxBuffer.toString('base64'),
                     encoding: 'base64'
                 }
             ]
-        };
+        }
 
         try {
             const info = await transporter.sendMail(mailOptions);
@@ -189,9 +180,7 @@ async function sendMail(recipients, file, text,name,subject) {
     }
 }
 
-export {sendMail}
+export { sendMail }
 
 let subName = 'CN'; // will come from frontend
 let inputStudentList = 'lt.xlsx'; // will come from frontend
-// seatGen(subName, inputStudentList);
-//sendMail(['lakshyaasin@gmail.com'], 'hello', 'hello')
