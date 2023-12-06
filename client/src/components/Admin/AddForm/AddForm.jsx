@@ -25,7 +25,7 @@ const AddForm = () => {
     setSubject(''); // Clear input field after adding to the array
   };
 const handleSubmit=async(e)=>{
-  console.log(teacherData)
+  console.log("I am here->",teacherData)
   try {
 
     const res=await axios.post("http://localhost:3001/teacher",teacherData);
@@ -110,7 +110,7 @@ const handleSubmit=async(e)=>{
       </Button></div>
      {/* <FormHelperText>This is a helper text.</FormHelperText> */}
         </div>
-        <Button type="submit" variant="contained" onSubmit={handleSubmit} sx={{width:"fit-content",alignSelf:"center"}}>Submit</Button>
+        <Button type="submit" variant="contained" onClick={handleSubmit} sx={{width:"fit-content",alignSelf:"center"}}>Submit</Button>
       </form>
     </div>
   );

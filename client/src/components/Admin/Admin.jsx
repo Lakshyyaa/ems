@@ -41,6 +41,7 @@ export default function Admin() {
     fetchTicket();
   }, []);
   const checkForAvailability = async (index, ticket) => {
+
     try {
       const res = await axios.post("http://localhost:3001/admin/check", ticket);
       if (res.status === 200) {
@@ -82,7 +83,8 @@ export default function Admin() {
       newExpandedTickets[index] = !newExpandedTickets[index];
       return newExpandedTickets;
     });
-    checkForAvailability(index, ticket);
+    if(ticket.state==="pending"){
+    checkForAvailability(index, ticket);}
   };
   const openModal = () => {
     setIsModalOpen(true);
@@ -108,12 +110,12 @@ export default function Admin() {
                   <div>{`Status: ${ticket.state}`}</div>
                   {expandedTickets[index] && (
                     <>
-                      <div className={`${styles.pending} ${checker === 1 ? styles.accept : checker === 2 ? styles.reject : styles.loading}`}>{checker === 1 ? "Free" : checker === 2 ? "Busy" : "Loading"}</div>
+                      {ticket.state==="pending"?<div className={`${styles.pending} ${checker === 1 ? styles.accept : checker === 2 ? styles.reject : styles.loading}`}>{checker === 1 ? "Free" : checker === 2 ? "Busy" : "Loading"}</div>:null}
                       {ticket.start && <div> {`Start-Time: ${new Date(ticket.start).toLocaleTimeString()}`}</div>}
                       {ticket.end && <div> {`End-Time: ${new Date(ticket.end).toLocaleTimeString()}`}</div>}
                       {ticket.end && <div> {`Date: ${new Date(ticket.end).toLocaleDateString()}`}</div>}
                       <div>{`Subject: ${ticket.subject}`}</div>
-                      <div style={{ display: "flex" }} className={`${ticket.state === "pending" ? '' : styles.remove}`}>
+                      {ticket.state==="pending"?<div style={{ display: "flex" }} className={`${ticket.state === "pending" ? '' : styles.remove}`}>
                         <Button
                           variant="contained"
                           color="primary"
@@ -130,7 +132,7 @@ export default function Admin() {
                         >
                           Deny
                         </Button>
-                      </div>
+                      </div>:null}
                     </>
                   )}
                 </div>

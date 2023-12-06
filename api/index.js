@@ -73,7 +73,7 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
     res.cookie("jwtoken", token, {
-      expires: new Date(Date.now() + 250000),
+      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       httpOnly: true,
       path: "/",
     });

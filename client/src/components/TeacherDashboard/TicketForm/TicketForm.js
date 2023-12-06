@@ -7,7 +7,7 @@ import { InputLabel, MenuItem, Select } from "@mui/material";
 
 const TicketForm = ({ tickets, setTickets }) => {
   const { profile } = useProfile();
-  const subjects = profile.subject;
+  const subjects = profile.subjects;
   const [newTicketData, setNewTicketData] = useState({
     date: "",
     start_time: "",
@@ -20,7 +20,7 @@ const TicketForm = ({ tickets, setTickets }) => {
     _id: profile._id,
   });
   const handleCreateTicket = async (e) => {
-    console.log(newTicketData.file);
+    console.log("hi",profile.subject,profile);
     e.preventDefault();
     // Make a POST request to create a new ticket using Axios
     if (
@@ -47,6 +47,7 @@ const TicketForm = ({ tickets, setTickets }) => {
         if (response.status === 200) {
           console.log("Ticket Submitted", response);
           window.location.reload();
+          alert("Ticket Generated")
         }
       } catch (error) {
         console.log("Ticket Creation Failed:", error);
@@ -75,7 +76,7 @@ const TicketForm = ({ tickets, setTickets }) => {
             <option value="" disabled>
               Select a Subject
             </option>
-            {subjects.map((subject, index) => (
+            {subjects?.map((subject, index) => (
               <option key={index} value={subject}>
                 {subject}
               </option>

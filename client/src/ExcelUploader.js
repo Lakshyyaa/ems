@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import * as XLSX from 'xlsx';
 import { Bar } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
-import './ExcelUploader.css';
+import styles from './ExcelUploader.module.css';
 
 const ExcelUploader = () => {
   const [data, setData] = useState(null);
