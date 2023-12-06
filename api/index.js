@@ -223,7 +223,7 @@ app.post('/admin/check', async (req, res) => {
 })
 
 app.post('/admin/approve', async (req, res) => {
-  
+  console.log('approve block')
   const {_id}=req.body
   try {
     await ems(_id)
@@ -236,7 +236,7 @@ app.post('/admin/approve', async (req, res) => {
 
 app.post('/admin/deny', async (req, res) => {
   const {_id}= req.body;
-  
+  console.log('deny lvock')
   try {
     await Request.updateOne({ _id }, { $set: { state: 'denied' } });
     res.status(200).json({ message: 'Data denied successfully' });
@@ -277,6 +277,7 @@ async function deleteExpiredObjects() {
 }
 // Run the deletion logic at regular intervals
 setInterval(deleteExpiredObjects, 30 * 60 * 1000);
+
 
 // const conditionsmet = await checks('6569ded0571625eadb88bc16')
 // return the value

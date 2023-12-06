@@ -23,7 +23,7 @@ const connectDB = async () => {
     console.log('connected db')
     // await mongoose.connect('mongodb://127.0.0.1:27017/teacherDB');
     // console.log('Connected to MongoDB');
-    // for (let i = 0; i < 20; i++) {
+    // for (let i = 0; i < 10; i++) {
     //     const newHall = new Hall({
     //         hall: i + 1,
     //         free: 1,

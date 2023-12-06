@@ -168,9 +168,9 @@ const { getRootProps, getInputProps } = useDropzone({
 });
 
 return (
-  <div className="excel-uploader-container">
+  <div className={styles.excelUploaderContainer}>
     {!data ? (
-      <div {...getRootProps()} className="dropzone">
+      <div {...getRootProps()} className={styles.dropzone}>
         <input {...getInputProps()} />
         <p>Drag 'n' drop an Excel file here, or click to select one</p>
       </div>
@@ -178,23 +178,23 @@ return (
 
     {data && (
       <>
-        <button onClick={toggleStatistics} className="togglebutton">
+        <button onClick={toggleStatistics} className={styles.togglebutton}>
           {showStatistics ? 'Hide Statistics' : 'Show Statistics'}
         </button>
 
         {showStatistics && mean && median && mode && (
-          <div className="statistics-container">
+          <div className={styles.statisticsContainer}>
             <h2>Statistics</h2>
-            <div className="statistics-item">Mean: {mean}</div>
-            <div className="statistics-item">Median: {median}</div>
-            <div className="statistics-item">Mode: {mode}</div>
+            <div className={styles.statisticsItem}>Mean: {mean}</div>
+            <div className={styles.statisticsItem}>Median: {median}</div>
+            <div className={styles.statisticsItem}>Mode: {mode}</div>
           </div>
         )}
       </>
     )}
 
     {data && (
-      <div className="chart-container">
+      <div className={styles.chartContainer}>
         <h2>Graphical Analysis</h2>
         <Bar
           data={prepareChartData()}
