@@ -36,6 +36,9 @@ async function ems(id) {
     let students = await fetchSheet(req.link)
     let halls = await Hall.find({})
     let teachers = await userSchema.find({})
+    let teachersNotFree = [];
+    let newData = [];
+    let notFree = []
 
     if (req.type == 'cancel') {
         try {
@@ -46,13 +49,12 @@ async function ems(id) {
         // await sendMail(students, 0, `Your exam for ${req.subject} from ${req.start} to ${req.end} has been cancelled`, 0, req.subject)
     }
     else if (req.type == 'view') {
-        // await sendMail(students, 0, 'Please view your sheets in hall 10 on 10:30 am', 0, req.subject)
+        // await sendMail(students, 0, `Please view your sheets in hall from ${req.start} for ${req.subject} `, 0, req.subject)
     }
     else {
         // 1. making the seatgen 
         let numberOfStudents = students.length;
-        let newData = [];
-        let notFree = []
+
         var studentIndex = 0;
         let i = 0
         while (i < halls.length) {
@@ -92,7 +94,6 @@ async function ems(id) {
         const numOfTeachers = teachers.length;
         i = 0;
         let j = 0;
-        let teachersNotFree = [];
 
         for (let element of newData) {
             if (i % 20 == 0) {
@@ -114,12 +115,13 @@ async function ems(id) {
         } catch (err) {
             console.error(err);
         }
-        // await sendMail(students, newData, 'Please find the seat and invigilation', req.subject, req.subject)
+        await sendMail(students, newData, 'Please find the seat and invigilation', req.subject, req.subject)
     }
 
     // 4. saving the update request state
     req.state = 'approved'
     req.teachers = teachersNotFree
     await req.save()
+    console.log(newData)
 }
 export { checks, ems }

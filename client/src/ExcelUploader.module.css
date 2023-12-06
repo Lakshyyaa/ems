@@ -1,16 +1,4 @@
-/* .excel-uploader-container {
-    text-align: center;
-    margin-top: 20px;
-}
-
-input[type="file"] {
-    margin-bottom: 20px;
-}
-
-h2 {
-    margin-top: 20px;
-} */
-.excel-uploader-container {
+.excelUploaderContainer {
     text-align: center;
     margin: 20px auto;
     max-width: 1000px;
@@ -20,10 +8,9 @@ h2 {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-
 input[type="file"] {
-    margin-bottom: 20px;
-    display: none;
+    /* margin-bottom: 20px; */
+    /* display: none; */
     /* Hide the default file input */
 }
 
@@ -56,24 +43,24 @@ input[type="file"] {
     font-size: 16px;
 }
 
-.toggle-button:hover {
+.toggleButton:hover {
     background-color: #0056b3;
 }
 
-.chart-container {
+.chartContainer {
     margin-top: 20px;
 }
 
-.statistics-container {
+.statisticsContainer {
     margin-top: 20px;
     text-align: center;
 }
 
-.statistics-container h2 {
+.statisticsContainer h2 {
     margin-bottom: 10px;
 }
 
-.statistics-item {
+.statisticsItem {
     margin-bottom: 10px;
     font-size: 18px;
     color: #333;

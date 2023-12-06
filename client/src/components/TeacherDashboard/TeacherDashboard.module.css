@@ -21,7 +21,6 @@ body .video video {
     flex-direction: column;
     margin: 5rem;
     padding-bottom: 1rem;
-/* From https://css.glass */
 background: rgba(177, 208, 224, 0.13);
 border-radius: 16px;
 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -68,7 +67,6 @@ backdrop-filter: blur(0px);
   }
   .ticketListItem {
     margin-bottom: 10px;
-   /* From https://css.glass */
 background: rgba(0, 0, 4, 0.36);
 
 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -84,7 +82,6 @@ border: 1px solid rgba(0, 0, 4, 0.3);
     flex-direction: column;
   }
   
-  /* Add more styles as needed */
   .button {
     align-self: center;
     padding: 10px 20px;
@@ -99,7 +96,6 @@ border: 1px solid rgba(0, 0, 4, 0.3);
   .new_button{
     align-self: flex-end;
     margin-right:2rem;
-   /* From https://css.glass */
 background: rgba(0, 0, 4, 0.36);
 border-radius: 16px;
 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -121,7 +117,6 @@ border: 1px solid rgba(0, 0, 4, 0.3);
   }
   
   .modalContent {
- /* From https://css.glass */
  color: white;
 background: rgba(105, 152, 171, 0.3764705882352941);
 border-radius: 16px;

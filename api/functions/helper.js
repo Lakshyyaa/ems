@@ -56,7 +56,7 @@ async function deleteSheet(sheetName) {
 
 
 async function fetchSheet(link) {
-    const url = `https://api.github.com/repos/Lakshyyaa/emscdn/contents/files/${link}`;
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/files/${link}`;
     try {
         const response = await axios.get(url);
         const base64Content = response.data.content;

@@ -7,7 +7,7 @@ import { InputLabel, MenuItem, Select } from "@mui/material";
 
 const TicketForm = ({ tickets, setTickets }) => {
   const { profile } = useProfile();
-  const subjects = profile.subject;
+  const subjects = profile.subjects;
   const [newTicketData, setNewTicketData] = useState({
     date: "",
     start_time: "",
