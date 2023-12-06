@@ -118,7 +118,7 @@ export default function Admin() {
                           variant="contained"
                           color="primary"
                           sx={{ width: "fit-content", marginRight: "1rem" }}
-                          onClick={()=>denyRequest(ticket)}
+                          onClick={() => denyRequest(ticket)}
                         >
                           Approve
                         </Button>
@@ -126,7 +126,7 @@ export default function Admin() {
                           variant="contained"
                           color="primary"
                           sx={{ width: "fit-content" }}
-                          onClick={()=>approveRequest(ticket)}
+                          onClick={() => approveRequest(ticket)}
                         >
                           Deny
                         </Button>

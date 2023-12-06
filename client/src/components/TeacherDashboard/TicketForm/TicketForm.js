@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import styles from "./TicketForm.module.css";
 import axios from "axios";
 import { useProfile } from "../../Context/Context";
-import { Button, Input, Option, Select } from "@mui/joy";
+import { Button, Input } from "@mui/joy";
+import { InputLabel, MenuItem, Select } from "@mui/material";
 
 const TicketForm = ({ tickets, setTickets }) => {
   const { profile } = useProfile();
+  const subjects = profile.subject;
   const [newTicketData, setNewTicketData] = useState({
     date: "",
     start_time: "",
@@ -53,18 +55,17 @@ const TicketForm = ({ tickets, setTickets }) => {
       alert("Please enter the data in correct format");
     }
   };
-  const subjects = profile.subject;
+
   return (
     <div className={styles.ticket_form}>
       <form>
-        <div>{profile.email}</div>
-        <div></div>
-        <div></div>
+        <div className={styles.name}>Name: {profile.name}</div>
+        <div className={styles.email}> Email: {profile.email}</div>
+        <div ></div>
         <div className={styles.form_inputs}>
-        <label htmlFor="excel">Subject</label>
-          <Select
-          placeholder="Choose one…"
-          sx={{ width: 240 }}
+          <label htmlFor="excel">Subject</label>
+
+          <select
             required
             value={newTicketData.subject}
             onChange={(e) =>
@@ -72,20 +73,18 @@ const TicketForm = ({ tickets, setTickets }) => {
             }
           >
             <option value="" disabled>
-              Select a subject
+              Select a Subject
             </option>
             {subjects.map((subject, index) => (
               <option key={index} value={subject}>
                 {subject}
               </option>
             ))}
-          </Select>
+          </select>
         </div>
         <div className={styles.form_inputs}>
-        <label htmlFor="excel">Request Type</label>
-          <Select
-          sx={{ width: 240 }}
-          placeholder="Choose one…"
+          <label htmlFor="excel">Request Type</label>
+          <select
             required
             value={newTicketData.request_type}
             onChange={(e) =>
@@ -95,13 +94,13 @@ const TicketForm = ({ tickets, setTickets }) => {
               })
             }
           >
-            <Option value="" disabled>
+            <option value="" disabled>
               Select Request Type
-            </Option>
-            <Option value="schedule">Schedule</Option>
-            <Option value="cancel">Cancel</Option>
-            <Option value="view">View Sheet</Option>
-          </Select>
+            </option>
+            <option value="schedule">Schedule</option>
+            <option value="cancel">Cancel</option>
+            <option value="view">View Sheet</option>
+          </select>
         </div>
         <div className={styles.form_inputs}>
           <label htmlFor="excel">Date</label>

@@ -1,6 +1,7 @@
 .ticket_form{
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
 }
 .form_inputs{
     align-items: flex-start;
@@ -10,4 +11,12 @@
 .form_inputs:first-child{
     flex-direction: row;
     justify-content: space-around;
+}
+.name{
+    font-size: 18px;
+    align-self: flex-start;
+}
+.email{
+    font-size: 18px;
+    align-self: flex-start;
 }

@@ -5,7 +5,7 @@ import { Button, FormHelperText, FormLabel, TextField } from "@mui/material";
 import axios from "axios";
 
 const AddForm = () => {
-  const [subject, setSubject] = useState('');
+  const [subject, setSubject] = useState("");
   const [inputArray, setInputArray] = useState([]);
   const [teacherData, setTeacherData] = useState({
     name: "",
@@ -14,33 +14,33 @@ const AddForm = () => {
     subjects: inputArray,
     free: Number(1),
     dep: "",
-    role: "teacher",
-
+    role:"teacher",
+    
   });
-
+ 
 
   const handleAddInput = () => {
-
+    
     teacherData.subjects.push(subject)
     setSubject(''); // Clear input field after adding to the array
   };
-  const handleSubmit = async (e) => {
-    console.log(teacherData)
-    try {
+const handleSubmit=async(e)=>{
+  console.log(teacherData)
+  try {
 
-      const res = await axios.post("http://localhost:3001/teacher", teacherData);
-      if (res.status === 200) {
-        console.log("Ticket Submitted", res);
-        alert("teacher added successfully")
-      }
-      if (res.status === 201) {
-        alert("Email Already Exists");
-        console.log(res.status)
-      }
-    } catch (error) {
-      console.log("error is here", error)
+    const res=await axios.post("http://localhost:3001/teacher",teacherData);
+    if (res.status === 200) {
+      console.log("Ticket Submitted",res);
     }
+    if(res.status===201){
+      alert("Email Already Exists");
+      console.log(res.status)
+    }
+  } catch (error) {
+    console.log("error is here", error)
+   
   }
+}
   return (
     <div className={styles.add_form}>
       <h3>AddTeacher</h3>
@@ -54,6 +54,7 @@ const AddForm = () => {
             onChange={(e) =>
               setTeacherData({ ...teacherData, name: e.target.value })
             }
+            required
           />
         </div>
         <div className={styles.input_field}>
@@ -61,11 +62,12 @@ const AddForm = () => {
           <Input
             size="md"
             placeholder="Enter email"
+            type="email"
             value={teacherData.email}
             onChange={(e) =>
               setTeacherData({ ...teacherData, email: e.target.value })
             }
-
+            
           />
         </div>
         <div className={styles.input_field}>
@@ -77,6 +79,7 @@ const AddForm = () => {
             onChange={(e) =>
               setTeacherData({ ...teacherData, password: e.target.value })
             }
+            required
           />
         </div>
         <div className={styles.input_field}>
@@ -88,25 +91,26 @@ const AddForm = () => {
             onChange={(e) =>
               setTeacherData({ ...teacherData, dep: e.target.value })
             }
+            
           />
         </div>
-        <div className={styles.input_field} >
+        <div className={styles.input_field}>
           <div className={styles.label}>Subject:</div>
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <Input
-              size="md"
-              placeholder="Enter Subjects"
-              value={subject}
-              onChange={(e) =>
-                setSubject(e.target.value)
-              }
-            />
-            <Button variant="contained" color="primary" onClick={handleAddInput} sx={{ width: "fit-content" }}>
-              Add
-            </Button></div>
-          {/* <FormHelperText>This is a helper text.</FormHelperText> */}
+          <div style={{display:"flex",flexDirection:"row"}}>
+          <Input
+            size="md"
+            placeholder="Enter Subjects"
+            value={subject}
+            onChange={(e) =>
+              setSubject(e.target.value)
+            }
+          />
+      <Button variant="contained" color="primary" onClick={handleAddInput} sx={{width:"fit-content"}}>
+        Add
+      </Button></div>
+     {/* <FormHelperText>This is a helper text.</FormHelperText> */}
         </div>
-        <Button type="submit" variant="contained" onClick={handleSubmit} sx={{ width: "fit-content", alignSelf: "center" }}>Submit</Button>
+        <Button type="submit" variant="contained" onSubmit={handleSubmit} sx={{width:"fit-content",alignSelf:"center"}}>Submit</Button>
       </form>
     </div>
   );
