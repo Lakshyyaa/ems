@@ -213,7 +213,7 @@ return (
                 },
                 beginAtZero: true,
                 stepSize: 10, // Set the interval between ticks
-                max: 400, // Set the maximum value for the y-axis
+                max: 20, // Set the maximum value for the y-axis
               },
             },
           }}
