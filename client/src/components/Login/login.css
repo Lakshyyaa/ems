@@ -73,12 +73,12 @@ h2 {
     color: #d9534f;
     text-align: center;
 }
-body {
+/* body {
     background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
     background-size: 400% 400%;
     animation: gradient 10s ease infinite;
     height: 100vh;
-}
+} */
 
 .glass {
     padding: 3rem;
@@ -91,12 +91,12 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-body {
+/* body {
     background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
     background-size: 400% 400%;
     animation: gradient 10s ease infinite;
     height: 100vh;
-}
+} */
 
 .p-button.p-component {
     padding: 1rem;
@@ -107,7 +107,7 @@ body {
     border: 3px solid var(--primary-color);
 }
 
-@keyframes gradient {
+/* @keyframes gradient {
     0% {
         background-position: 0% 50%;
     }
@@ -119,12 +119,12 @@ body {
     100% {
         background-position: 0% 50%;
     }
-}
+} */
 
-body {
+/* body {
     --sb-track-color: #232e33;
     --sb-thumb-color: #2c96bd;
     --sb-size: 7px;
 
     scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
-}
+} */

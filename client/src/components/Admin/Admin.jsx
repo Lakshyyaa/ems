@@ -41,41 +41,42 @@ export default function Admin() {
     fetchTicket();
   }, []);
   const checkForAvailability = async (index, ticket) => {
-
     try {
       const res = await axios.post("http://localhost:3001/admin/check", ticket);
       if (res.status === 200) {
         setChecker(1);
+      } else {
+        setChecker(2);
       }
-      else { setChecker(2) };
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
   const denyRequest = async (ticket) => {
     try {
-      const res = await axios.post("http://localhost:3001/admin/deny", ticket)
+      const res = await axios.post("http://localhost:3001/admin/deny", ticket);
       if (res.status === 200) {
-        console.log("Request Approved")
-        window.location.reload()
+        console.log("Request Approved");
+        window.location.reload();
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
   const approveRequest = async (ticket) => {
     try {
-      const res = await axios.post("http://localhost:3001/admin/approve", ticket)
+      const res = await axios.post(
+        "http://localhost:3001/admin/approve",
+        ticket
+      );
       if (res.status === 200) {
-        console.log("Request Approved")
-        window.location.reload()
-
+        console.log("Request Approved");
+        window.location.reload();
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-
+  };
 
   const handleTicketClick = (index, ticket) => {
     setExpandedTickets((prevExpandedTickets) => {
@@ -83,8 +84,9 @@ export default function Admin() {
       newExpandedTickets[index] = !newExpandedTickets[index];
       return newExpandedTickets;
     });
-    if(ticket.state==="pending"){
-    checkForAvailability(index, ticket);}
+    if (ticket.state === "pending") {
+      checkForAvailability(index, ticket);
+    }
   };
   const openModal = () => {
     setIsModalOpen(true);
@@ -96,6 +98,10 @@ export default function Admin() {
   };
   return (
     <div className={styles.mainBox}>
+      <video autoPlay muted loop id="video-bg">
+        <source src="/public/video.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       <div className={styles.box}>
         <div className={styles.requestBox}>
           <div className={styles.ticket_status}>
@@ -110,29 +116,71 @@ export default function Admin() {
                   <div>{`Status: ${ticket.state}`}</div>
                   {expandedTickets[index] && (
                     <>
-                      {ticket.state==="pending"?<div className={`${styles.pending} ${checker === 1 ? styles.accept : checker === 2 ? styles.reject : styles.loading}`}>{checker === 1 ? "Free" : checker === 2 ? "Busy" : "Loading"}</div>:null}
-                      {ticket.start && <div> {`Start-Time: ${new Date(ticket.start).toLocaleTimeString()}`}</div>}
-                      {ticket.end && <div> {`End-Time: ${new Date(ticket.end).toLocaleTimeString()}`}</div>}
-                      {ticket.end && <div> {`Date: ${new Date(ticket.end).toLocaleDateString()}`}</div>}
+                      {ticket.state === "pending" ? (
+                        <div
+                          className={`${styles.pending} ${
+                            checker === 1
+                              ? styles.accept
+                              : checker === 2
+                              ? styles.reject
+                              : styles.loading
+                          }`}
+                        >
+                          {checker === 1
+                            ? "Free"
+                            : checker === 2
+                            ? "Busy"
+                            : "Loading"}
+                        </div>
+                      ) : null}
+                      {ticket.start && (
+                        <div>
+                          {" "}
+                          {`Start-Time: ${new Date(
+                            ticket.start
+                          ).toLocaleTimeString()}`}
+                        </div>
+                      )}
+                      {ticket.end && (
+                        <div>
+                          {" "}
+                          {`End-Time: ${new Date(
+                            ticket.end
+                          ).toLocaleTimeString()}`}
+                        </div>
+                      )}
+                      {ticket.end && (
+                        <div>
+                          {" "}
+                          {`Date: ${new Date(ticket.end).toLocaleDateString()}`}
+                        </div>
+                      )}
                       <div>{`Subject: ${ticket.subject}`}</div>
-                      {ticket.state==="pending"?<div style={{ display: "flex" }} className={`${ticket.state === "pending" ? '' : styles.remove}`}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          sx={{ width: "fit-content", marginRight: "1rem" }}
-                          onClick={() => denyRequest(ticket)}
+                      {ticket.state === "pending" ? (
+                        <div
+                          style={{ display: "flex" }}
+                          className={`${
+                            ticket.state === "pending" ? "" : styles.remove
+                          }`}
                         >
-                          Deny
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          sx={{ width: "fit-content" }}
-                          onClick={() => approveRequest(ticket)}
-                        >
-                          Approve
-                        </Button>
-                      </div>:null}
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            sx={{ width: "fit-content", marginRight: "1rem" }}
+                            onClick={() => denyRequest(ticket)}
+                          >
+                            Deny
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            sx={{ width: "fit-content" }}
+                            onClick={() => approveRequest(ticket)}
+                          >
+                            Approve
+                          </Button>
+                        </div>
+                      ) : null}
                     </>
                   )}
                 </div>
