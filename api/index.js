@@ -21,7 +21,7 @@ dotenv.config();
 app.use(
   cors({
     credentials: true, // Allow credentials (cookies) to be sent
-    origin: "http://localhost:3000", // Replace with your frontend URL
+    origin: "http://localhost:3000/", // Replace with your frontend URL
   })
 );
 app.use(express.json());
@@ -135,10 +135,10 @@ app.post("/tickets", upload.single('file'), async (req, res) => {
     let link = (_id) + subject + '.xlsx'
     const checksame = await Request.findOne({ id: _id, subject: subject })
 
-    if (checksame) {
+    if (checksame) {  
       state = 'denied'
     }
-    if (request_type != 'cancel' && state==='pending') {
+    if (request_type != 'cancel' && state!='denied') {
       try {
         await uploadSheet(file, (_id) + subject + '.xlsx')
       }
@@ -253,7 +253,7 @@ app.post('/admin/deny', async (req, res) => {
     console.error(error)
   }
 })
-app.listen(3001, (req, res) => {
+app.listen(3001 || process.env.PORT, (req, res) => {
   console.log("app is listening on port 3001");
 });
 

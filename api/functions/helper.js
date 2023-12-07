@@ -12,7 +12,7 @@ const octokit = new Octokit({
         fetch:fetch
     }
 });
-const owner = 'AyushMathpal';
+const owner = 'Lakshyyaa';
 const repo = 'emscdn';
 const branch = 'main';
 
