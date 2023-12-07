@@ -12,7 +12,6 @@ const owner = 'Lakshyyaa';
 const repo = 'emscdn';
 const branch = 'main';
 
-
 async function uploadSheet(file, name) {
     try {
         const fileContent = Buffer.from(file.buffer).toString('base64');
@@ -53,7 +52,6 @@ async function deleteSheet(sheetName) {
         console.error('Error deleting file:', error.message);
     }
 }
-
 
 async function fetchSheet(link) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/files/${link}`;

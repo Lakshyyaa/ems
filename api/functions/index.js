@@ -151,31 +151,34 @@ async function writeToSheet(newData, subName) {
 // ONCE THE WRITE SHEET IS DONE, IT WILL PUSH IT TO GITHUB AND MAIL TO STUDENTS
 async function sendMail(recipients, file, text, name, subject) {
     for (const recipient of recipients) {
-        const mailOptions = {
-            from: 'lnmiitems123@gmail.com',
-            to: recipient.EMAIL,
-            subject: subject,
-            text: text,
-        };
-        if (file) {
-            const wb = xlsx.utils.book_new();
-            const ws = xlsx.utils.json_to_sheet(file);
-            xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-            const xlsxBuffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
-            mailOptions.attachments = [
-                {
-                    filename: name + '.xlsx', // Change this to the desired file name
-                    content: xlsxBuffer.toString('base64'),
-                    encoding: 'base64'
-                }
-            ]
-        }
+        if (recipient && recipient.EMAIL)
+        {
+            const mailOptions = {
+                from: 'lnmiitems123@gmail.com',
+                to: recipient.EMAIL,
+                subject: subject,
+                text: text,
+            };
+            if (file) {
+                const wb = xlsx.utils.book_new();
+                const ws = xlsx.utils.json_to_sheet(file);
+                xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+                const xlsxBuffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
+                mailOptions.attachments = [
+                    {
+                        filename: name + '.xlsx', // Change this to the desired file name
+                        content: xlsxBuffer.toString('base64'),
+                        encoding: 'base64'
+                    }
+                ]
+            }
 
-        try {
-            const info = await transporter.sendMail(mailOptions);
-            console.log(`Email sent to ${recipient}:`, info.response);
-        } catch (error) {
-            console.error(`Error sending email to ${recipient}:`, error);
+            try {
+                const info = await transporter.sendMail(mailOptions);
+                console.log(`Email sent to ${recipient}:`, info.response);
+            } catch (error) {
+                console.error(`Error sending email to ${recipient}:`, error);
+            }
         }
     }
 }

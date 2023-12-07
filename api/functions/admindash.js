@@ -5,6 +5,9 @@ import { sendMail } from "./index.js";
 import userSchema from "../model/userSchema.js";
 async function checks(id) {
     const req = await Request.findOne({ _id: id });
+    if (req.type === 'cancel') {
+        return 1;
+    }
     const reqs = await Request.find({});
     // 1. checking halls and time
     let approved = 1
@@ -33,6 +36,30 @@ async function checks(id) {
 async function ems(id) {
     // type of req: view and delete and cancel
     const req = await Request.findOne({ _id: id })
+    if (req.type === 'cancel') {
+        try {
+            const documentsToDelete = await Request.find({ subject: req.subject, id: req.id, state: 'approved' });
+            let cancelteachers = 0
+            let cancelhalls = []
+            for (const document of documentsToDelete) {
+                cancelhalls=cancelhalls+document.halls
+                cancelteachers.push(...document.teachers);
+            }
+            await userSchema.updateMany({ _id: { $in: cancelteachers } }, { $set: { free: 1 } });
+            
+            const result = await Request.deleteMany({ subject: req.subject, id: req.id, state: 'approved' });
+            // free hall and teacher for each that is deleted pls PLEASE
+            if (result.deletedCount > 0) {
+                await sendMail(students, 0, `Your exam for ${req.subject} from ${req.start} to ${req.end} has been cancelled`, 0, req.subject)
+            }
+            console.log('deleted all')
+        } catch (error) {
+            console.error(error)
+        }
+        req.state = 'approved'
+        await req.save()
+        return
+    }
     let students = await fetchSheet(req.link)
     let halls = await Hall.find({})
     let teachers = await userSchema.find({})
@@ -40,16 +67,9 @@ async function ems(id) {
     let newData = [];
     let notFree = []
 
-    if (req.type == 'cancel') {
-        try {
-            const result = await Request.deleteOne({ subject: req.subject, start: req.start });
-        } catch (error) {
-            console.error(error)
-        }
-        // await sendMail(students, 0, `Your exam for ${req.subject} from ${req.start} to ${req.end} has been cancelled`, 0, req.subject)
-    }
-    else if (req.type == 'view') {
-        // await sendMail(students, 0, `Please view your sheets in hall from ${req.start} for ${req.subject} `, 0, req.subject)
+
+    if (req.type === 'view') {
+        await sendMail(students, 0, `Please view your sheets in hall from ${req.start} for ${req.subject} `, 0, req.subject)
     }
     else {
         // 1. making the seatgen 
@@ -116,11 +136,11 @@ async function ems(id) {
             console.error(err);
         }
         await sendMail(students, newData, 'Please find the seat and invigilation', req.subject, req.subject)
+        req.teachers = teachersNotFree
     }
 
     // 4. saving the update request state
     req.state = 'approved'
-    req.teachers = teachersNotFree
     await req.save()
     console.log(newData)
 }

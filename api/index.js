@@ -124,28 +124,37 @@ app.post("/tickets", upload.single('file'), async (req, res) => {
     // Create Date objects for start_time and end_time
     const startTime = new Date(startDateTimeString);
     const endTime = new Date(endDateTimeString);
-    try {
-      await uploadSheet(file, (_id) + subject + '.xlsx')
-    }
-    catch (err) {
-      console.error(err)
-    }
 
     const fileBuffer = await file.buffer;
     const workbook = await xlsx.read(fileBuffer, { type: 'buffer' });
     const sheetName = await workbook.SheetNames[0];
     const worksheet = await workbook.Sheets[sheetName];
     const newfile = await xlsx.utils.sheet_to_json(worksheet);
-    const hallsize = 40
+    const hallsize = 27
+    let state = 'pending'
+    let link = (_id) + subject + '.xlsx'
+    const checksame = await Request.findOne({ id: _id, subject: subject })
+
+    if (checksame) {
+      state = 'denied'
+    }
+    if (request_type != 'cancel' && state==='pending') {
+      try {
+        await uploadSheet(file, (_id) + subject + '.xlsx')
+      }
+      catch (err) {
+        console.error(err)
+      }
+    }
     // here we also add the number of halls the exam will requre in the reqeust db to be later used
     const newRequest = await new Request({
       subject: subject,
       start: startTime,
       end: endTime,
-      link: (_id) + subject + '.xlsx',
+      link: link,
       type: request_type, // Adjust the type accordingly
-      state: 'pending',
-      id:_id,
+      state: state,
+      id: _id,
       halls: Math.ceil(newfile.length / hallsize)
     });
     // const fileBuffer = await file.buffer;
@@ -166,32 +175,32 @@ app.post("/tickets", upload.single('file'), async (req, res) => {
   }
 });
 
-app.post("/teacher",async(req,res)=>{
-  const {name,email,password,subjects,free,dep,role}=req.body
-   try {
+app.post("/teacher", async (req, res) => {
+  const { name, email, password, subjects, free, dep, role } = req.body
+  try {
     const user = await User.findOne({ email });
-    if (user) return res.status(201).json({message:"Email Already Exists"});
-    const userData = new User({ email,password,role,name,free,subjects,dep});
+    if (user) return res.status(201).json({ message: "Email Already Exists" });
+    const userData = new User({ email, password, role, name, free, subjects, dep });
     // how to save the rest of the deets
     await userData.save();
   } catch (error) {
     console.error("Error in Adding Teacher:", error);
   }
 })
-app.get('/teacher/:_id',async(req,res)=>{
-  const {name,email,password,subjects,free,dep,role}=req.body;
-  const id=req.params._id
-   try {
-    const requests = await Request.find({id});
+app.get('/teacher/:_id', async (req, res) => {
+  const { name, email, password, subjects, free, dep, role } = req.body;
+  const id = req.params._id
+  try {
+    const requests = await Request.find({ id });
     res.status(200).json({ requests });
   } catch (error) {
     console.error("Error in Adding Teacher:", error);
   }
 });
-app.get('/admin/:_id',async(req,res)=>{
-  const {name,email,password,subjects,free,dep,role}=req.body;
-  const id=req.params._id
-   try {
+app.get('/admin/:_id', async (req, res) => {
+  const { name, email, password, subjects, free, dep, role } = req.body;
+  const id = req.params._id
+  try {
     const requests = await Request.find();
     res.status(200).json({ requests });
   } catch (error) {
@@ -206,8 +215,8 @@ app.get("/logout", (req, res) => {
   res.status(200).json({ success: true, message: "Logout successful" });
 });
 app.post('/admin/check', async (req, res) => {
-  const {_id}= req.body;
-  
+  const { _id } = req.body;
+
   try {
     const conditionsmet = await checks(_id)
     if (conditionsmet) {
@@ -224,7 +233,7 @@ app.post('/admin/check', async (req, res) => {
 
 app.post('/admin/approve', async (req, res) => {
   console.log('approve block')
-  const {_id}=req.body
+  const { _id } = req.body
   try {
     await ems(_id)
     res.status(200).json({ message: 'EMS DONE!' });
@@ -235,7 +244,7 @@ app.post('/admin/approve', async (req, res) => {
 })
 
 app.post('/admin/deny', async (req, res) => {
-  const {_id}= req.body;
+  const { _id } = req.body;
   console.log('deny lvock')
   try {
     await Request.updateOne({ _id }, { $set: { state: 'denied' } });
