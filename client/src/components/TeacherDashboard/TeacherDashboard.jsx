@@ -28,7 +28,7 @@ const TeacherDashboard = () => {
           `http://localhost:3001/teacher/${profile._id}`
         );
         setTickets(res.data.requests);
-        console.log(tickets);
+        const sub= tickets?.filter((ticket)=>ticket.state==="pending")?.map((ticket)=>ticket["subject"])
       } catch (err) {
         console.log("Error fetching tickets", err);
       }
@@ -38,6 +38,8 @@ const TeacherDashboard = () => {
   }, []);
 
   const openModal = () => {
+    console.log(tickets)
+    
     setIsModalOpen(true);
   };
 
@@ -67,6 +69,7 @@ const TeacherDashboard = () => {
               {tickets?.map((ticket, index) => (
                 <div key={index} className={styles.ticketListItem}>
                   <div>{`Status: ${ticket.state}`}</div>
+                  <div>{`Subject: ${ticket.subject}`}</div>
                 {ticket.start && <div> {`Start-Time: ${new Date(ticket.start).toLocaleTimeString()}`}</div>}
                   {ticket.end && <div> {`End-Time: ${new Date(ticket.end).toLocaleTimeString()}`}</div>}
                   {ticket.end && <div> {`Date: ${new Date(ticket.end).toLocaleDateString()}`}</div>}
@@ -93,7 +96,7 @@ const TeacherDashboard = () => {
               <button onClick={closeModal} className={styles.close_button}>
                 X
               </button>
-              <TicketForm tickets setTickets />
+              <TicketForm tickets setTickets allowed/>
               {/* Add form fields for new ticket data */}
             </Modal>
             <button
@@ -106,8 +109,8 @@ const TeacherDashboard = () => {
               isOpen={isModalOpen2}
               onRequestClose={closeModal2}
               contentLabel="Show Class Progress"
-              className={styles.modalContent}
-              overlayClassName={styles.modalOverlay}
+              className={`${styles.modalContent}  ${styles.graph_overlay}` }
+              overlayClassName={`${styles.modalOverlay}`}
             >
               <button onClick={closeModal2} className={styles.close_button}>
                 X

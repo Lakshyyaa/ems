@@ -5,7 +5,7 @@ import { useProfile } from "../../Context/Context";
 import { Button, Input } from "@mui/joy";
 import { InputLabel, MenuItem, Select } from "@mui/material";
 
-const TicketForm = ({ tickets, setTickets }) => {
+const TicketForm = ({ tickets, setTickets ,allowed}) => {
   const { profile } = useProfile();
   const subjects = profile.subjects;
   const [newTicketData, setNewTicketData] = useState({
@@ -19,8 +19,8 @@ const TicketForm = ({ tickets, setTickets }) => {
     dep: profile.dep,
     _id: profile._id,
   });
+
   const handleCreateTicket = async (e) => {
-    console.log(newTicketData.file);
     e.preventDefault();
     // Make a POST request to create a new ticket using Axios
     if (
@@ -31,8 +31,13 @@ const TicketForm = ({ tickets, setTickets }) => {
       newTicketData.subject !== "" &&
       newTicketData.request_type !== "" &&
       newTicketData.free !== "" &&
-      newTicketData._id !== ""
+      newTicketData._id !== "" 
+      
     ) {
+      if (newTicketData.start_time >= newTicketData.end_time) {
+        alert("Start time should be less than end time");
+        return;
+      }
       try {
         const response = await axios.post(
           "http://localhost:3001/tickets",
@@ -47,6 +52,7 @@ const TicketForm = ({ tickets, setTickets }) => {
         if (response.status === 200) {
           console.log("Ticket Submitted", response);
           window.location.reload();
+          alert("Ticket Generated")
         }
       } catch (error) {
         console.log("Ticket Creation Failed:", error);
@@ -75,7 +81,7 @@ const TicketForm = ({ tickets, setTickets }) => {
             <option value="" disabled>
               Select a Subject
             </option>
-            {subjects.map((subject, index) => (
+            {subjects?.map((subject, index) => (
               <option key={index} value={subject}>
                 {subject}
               </option>

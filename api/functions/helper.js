@@ -3,12 +3,16 @@ dotenv.config();
 import { Octokit } from '@octokit/rest';
 import fs from 'fs';
 import axios from 'axios';
+import fetch from 'node-fetch'
 import * as xlsx from 'xlsx';
 const token = process.env.GITHUB_TOKEN;
 const octokit = new Octokit({
     auth: token,
+    request:{
+        fetch:fetch
+    }
 });
-const owner = 'Lakshyyaa';
+const owner = 'AyushMathpal';
 const repo = 'emscdn';
 const branch = 'main';
 
