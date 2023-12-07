@@ -98,10 +98,6 @@ export default function Admin() {
   };
   return (
     <div className={styles.mainBox}>
-      <video autoPlay muted loop id="video-bg">
-        <source src="/public/video.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
       <div className={styles.box}>
         <div className={styles.requestBox}>
           <div className={styles.ticket_status}>
